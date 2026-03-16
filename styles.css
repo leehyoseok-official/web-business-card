@@ -1,0 +1,447 @@
+/* ==========================================================================
+   Design Tokens
+   ========================================================================== */
+:root {
+  /* Light mode */
+  --bg:         #F0F2F5;
+  --card-bg:    #FFFFFF;
+  --text-1:     #111827;
+  --text-2:     #6B7280;
+  --accent:     #1D4ED8;
+  --border:     #E5E7EB;
+  --footer-bg:  #F9FAFB;
+  --shadow:     0 4px 24px rgba(0, 0, 0, .08);
+  --focus-ring: #3B82F6;
+
+  /* Tag */
+  --tag-bg:     #EFF6FF;
+  --tag-text:   #1E40AF;
+  --tag-border: #BFDBFE;
+
+  /* Link buttons */
+  --email-bg:   #F0FDF4; --email-fg:   #15803D; --email-bd:   #BBF7D0;
+  --li-bg:      #EFF6FF; --li-fg:      #1D4ED8; --li-bd:      #BFDBFE;
+  --pf-bg:      #FAF5FF; --pf-fg:      #7C3AED; --pf-bd:      #E9D5FF;
+
+  /* vCard button */
+  --vcf-bg:     #111827; --vcf-fg:     #FFFFFF;
+
+  /* Misc */
+  --font:         'Inter', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+  --radius-card:  20px;
+  --radius-btn:   10px;
+  --radius-tag:   999px;
+  --trans:        150ms ease;
+}
+
+[data-theme="dark"] {
+  --bg:         #0D1117;
+  --card-bg:    #161B22;
+  --text-1:     #F0F6FC;
+  --text-2:     #8B949E;
+  --accent:     #58A6FF;
+  --border:     #30363D;
+  --footer-bg:  #0D1117;
+  --shadow:     0 4px 24px rgba(0, 0, 0, .45);
+  --focus-ring: #58A6FF;
+
+  --tag-bg:     #1C2D3D;
+  --tag-text:   #79B8FF;
+  --tag-border: #1F4068;
+
+  --email-bg:   #0D2818; --email-fg:   #3FB950; --email-bd:   #1A4731;
+  --li-bg:      #1C2D3D; --li-fg:      #79B8FF; --li-bd:      #1F4068;
+  --pf-bg:      #1E1830; --pf-fg:      #D2A8FF; --pf-bd:      #3D2B5E;
+
+  --vcf-bg:     #F0F6FC; --vcf-fg:     #0D1117;
+}
+
+/* ==========================================================================
+   Reset & Base
+   ========================================================================== */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text-1);
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  transition: background-color .2s ease, color .2s ease;
+}
+
+/* Accessible focus ring */
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Respect reduced-motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+  }
+}
+
+/* ==========================================================================
+   Theme Toggle
+   ========================================================================== */
+.theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 50;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text-1);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow);
+  transition: background var(--trans), border-color var(--trans), transform var(--trans);
+}
+
+.theme-toggle:hover {
+  transform: scale(1.08);
+}
+
+.icon {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+/* Light mode → moon visible; Dark mode → sun visible */
+.icon-sun  { display: none; }
+.icon-moon { display: block; }
+
+[data-theme="dark"] .icon-sun  { display: block; }
+[data-theme="dark"] .icon-moon { display: none; }
+
+/* ==========================================================================
+   Page Layout
+   ========================================================================== */
+.page {
+  width: 100%;
+  max-width: 420px;
+  padding: 24px 0 48px;
+}
+
+/* ==========================================================================
+   Card
+   ========================================================================== */
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transition: background var(--trans), border-color var(--trans), box-shadow var(--trans);
+  animation: fadeUp .35s ease both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ==========================================================================
+   Profile Header
+   ========================================================================== */
+.profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 36px 24px 24px;
+  border-bottom: 1px solid var(--border);
+  text-align: center;
+}
+
+.avatar-wrap {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  margin-bottom: 12px;
+}
+
+.avatar,
+.avatar-initial {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  border: 3px solid var(--border);
+}
+
+.avatar {
+  object-fit: cover;
+  display: block;
+}
+
+.avatar-initial {
+  background: var(--accent);
+  color: #fff;
+  font-size: 2rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  inset: 0;
+}
+
+.name {
+  font-size: 1.625rem;
+  font-weight: 600;
+  letter-spacing: -.025em;
+  line-height: 1.2;
+  color: var(--text-1);
+}
+
+.name-en {
+  font-size: .75rem;
+  font-weight: 500;
+  letter-spacing: .14em;
+  color: var(--text-2);
+  text-transform: uppercase;
+}
+
+.job-title {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--accent);
+  letter-spacing: .01em;
+}
+
+.company {
+  font-size: .875rem;
+  color: var(--text-2);
+}
+
+/* ==========================================================================
+   Sections
+   ========================================================================== */
+.section {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* Remove double-border between last section and footer */
+section:last-of-type {
+  border-bottom: none;
+}
+
+.section-label {
+  font-size: .6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--text-2);
+  margin-bottom: 12px;
+}
+
+/* Bio -------------------------------------------------------------------- */
+.bio {
+  font-size: .9375rem;
+  line-height: 1.8;
+  color: var(--text-2);
+  text-align: center;
+}
+
+/* Tags ------------------------------------------------------------------- */
+.tags {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tags li {
+  padding: 4px 12px;
+  border-radius: var(--radius-tag);
+  font-size: .8125rem;
+  font-weight: 500;
+  background: var(--tag-bg);
+  color: var(--tag-text);
+  border: 1px solid var(--tag-border);
+  transition: transform var(--trans);
+}
+
+.tags li:hover {
+  transform: translateY(-1px);
+}
+
+/* Timeline --------------------------------------------------------------- */
+.timeline {
+  list-style: none;
+}
+
+.timeline-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.timeline-item:first-child { padding-top: 0; }
+.timeline-item:last-child  { border-bottom: none; padding-bottom: 0; }
+
+.period {
+  flex-shrink: 0;
+  min-width: 76px;
+  font-size: .75rem;
+  font-weight: 500;
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+  padding-top: 2px;
+}
+
+.role {
+  display: block;
+  font-size: .9375rem;
+  font-weight: 500;
+  color: var(--text-1);
+  line-height: 1.3;
+}
+
+.org {
+  display: block;
+  font-size: .8125rem;
+  color: var(--text-2);
+  margin-top: 1px;
+}
+
+/* ==========================================================================
+   Buttons & Links
+   ========================================================================== */
+.links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 16px;
+  border-radius: var(--radius-btn);
+  font-size: .9375rem;
+  font-weight: 500;
+  font-family: var(--font);
+  text-decoration: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+  width: 100%;
+  line-height: 1;
+  transition: transform var(--trans), background var(--trans), opacity var(--trans);
+}
+
+.btn:hover  { transform: translateY(-1px); }
+.btn:active { transform: translateY(0); opacity: .85; }
+
+.btn-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.btn-email    { background: var(--email-bg); color: var(--email-fg); border-color: var(--email-bd); }
+.btn-linkedin { background: var(--li-bg);    color: var(--li-fg);    border-color: var(--li-bd); }
+.btn-portfolio{ background: var(--pf-bg);    color: var(--pf-fg);    border-color: var(--pf-bd); }
+.btn-vcf      { background: var(--vcf-bg);   color: var(--vcf-fg); }
+
+.btn-disabled {
+  opacity: .45;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   Card Footer
+   ========================================================================== */
+.card-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 24px 24px;
+  background: var(--footer-bg);
+  border-top: 1px solid var(--border);
+  transition: background var(--trans);
+}
+
+.copyright {
+  font-size: .75rem;
+  color: var(--text-2);
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+/* Mobile-first: full-bleed, no card chrome */
+@media (max-width: 479px) {
+  body {
+    align-items: stretch;
+  }
+
+  .page {
+    padding: 0;
+    max-width: 100%;
+  }
+
+  .card {
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    box-shadow: none;
+    min-height: 100vh;
+    min-height: 100svh;
+  }
+
+  .theme-toggle {
+    top: 12px;
+    right: 12px;
+  }
+}
+
+/* Desktop: centered card with padding */
+@media (min-width: 480px) {
+  body {
+    padding: 0 16px;
+    align-items: center;
+  }
+
+  /* 3-column layout for link buttons */
+  .links {
+    flex-direction: row;
+  }
+
+  .btn-email,
+  .btn-linkedin,
+  .btn-portfolio {
+    flex: 1;
+    font-size: .875rem;
+  }
+}

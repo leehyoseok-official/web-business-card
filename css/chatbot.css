@@ -1,0 +1,229 @@
+/* ===========================
+   CHATBOT - Dark Theme Safe
+   !important 강제 적용 버전
+=========================== */
+
+/* 플로팅 토글 버튼 */
+.chatbot-toggle {
+  position: fixed !important;
+  bottom: 24px !important;
+  right: 24px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  background: #c8a97e !important;   /* 골드 계열로 변경 - 검정 배경에서 잘 보임 */
+  color: #1a1a1a !important;
+  border: none !important;
+  border-radius: 50px !important;
+  padding: 12px 20px !important;
+  cursor: pointer !important;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.5) !important;
+  z-index: 9999 !important;
+  font-size: 13px !important;
+  line-height: 1.4 !important;
+  font-weight: 600 !important;
+  transition: transform 0.2s, box-shadow 0.2s !important;
+}
+.chatbot-toggle:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 28px rgba(0,0,0,0.6) !important;
+}
+
+/* 챗봇 창 */
+.chatbot-window {
+  position: fixed !important;
+  bottom: 90px !important;
+  right: 24px !important;
+  width: 360px !important;
+  height: 520px !important;
+  background: #ffffff !important;   /* ⭐ 명시적 흰색 */
+  border-radius: 16px !important;
+  box-shadow: 0 8px 48px rgba(0,0,0,0.6) !important;
+  border: 1px solid rgba(255,255,255,0.2) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  z-index: 9998 !important;
+  overflow: hidden !important;
+  color: #1a1a1a !important;        /* ⭐ 기본 텍스트 색 */
+}
+.chatbot-window.hidden {
+  display: none !important;
+}
+
+/* 헤더 */
+.chatbot-header {
+  background: #1a1a2e !important;
+  color: #ffffff !important;
+  padding: 14px 16px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  flex-shrink: 0 !important;
+}
+.chatbot-avatar {
+  width: 38px !important;
+  height: 38px !important;
+  background: #c8a97e !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-weight: bold !important;
+  font-size: 16px !important;
+  color: #1a1a1a !important;
+}
+.chatbot-info strong {
+  display: block !important;
+  font-size: 14px !important;
+  color: #ffffff !important;
+}
+.chatbot-info span {
+  font-size: 11px !important;
+  opacity: 0.7 !important;
+  color: #ffffff !important;
+}
+.chatbot-close {
+  margin-left: auto !important;
+  background: transparent !important;
+  border: none !important;
+  color: #ffffff !important;
+  cursor: pointer !important;
+  font-size: 16px !important;
+  opacity: 0.8 !important;
+  padding: 4px !important;
+}
+
+/* 메시지 영역 */
+.chatbot-messages {
+  flex: 1 !important;
+  overflow-y: auto !important;
+  padding: 16px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  background: #f5f5f5 !important;  /* ⭐ 명시적 배경 */
+}
+
+/* 말풍선 공통 */
+.chatbot-messages .message p {
+  margin: 0 !important;
+  font-size: 13.5px !important;
+  line-height: 1.6 !important;
+}
+
+/* 봇 말풍선 */
+.chatbot-messages .bot-message {
+  align-self: flex-start !important;
+  background: #ffffff !important;  /* ⭐ */
+  color: #1a1a1a !important;       /* ⭐ */
+  border-radius: 4px 16px 16px 16px !important;
+  padding: 12px 14px !important;
+  max-width: 85% !important;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1) !important;
+}
+.chatbot-messages .bot-message p {
+  color: #1a1a1a !important;       /* ⭐ */
+}
+
+/* 사용자 말풍선 */
+.chatbot-messages .user-message {
+  align-self: flex-end !important;
+  background: #1a1a2e !important;
+  color: #ffffff !important;       /* ⭐ */
+  border-radius: 16px 4px 16px 16px !important;
+  padding: 12px 14px !important;
+  max-width: 85% !important;
+}
+.chatbot-messages .user-message p {
+  color: #ffffff !important;       /* ⭐ */
+}
+
+/* 추천 질문 버튼 */
+.suggested-questions {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+  margin-top: 4px !important;
+}
+.suggestion-btn {
+  background: #f0ece6 !important;
+  border: 1px solid #e0d8cc !important;
+  border-radius: 20px !important;
+  padding: 6px 12px !important;
+  font-size: 12px !important;
+  cursor: pointer !important;
+  color: #333333 !important;       /* ⭐ */
+  transition: background 0.2s !important;
+}
+.suggestion-btn:hover {
+  background: #e0d8cc !important;
+}
+
+/* 로딩 애니메이션 */
+.loading-message {
+  gap: 4px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+.dot {
+  width: 7px !important;
+  height: 7px !important;
+  background: #aaaaaa !important;
+  border-radius: 50% !important;
+  display: inline-block !important;
+  animation: chatDotBounce 1.2s infinite !important;
+}
+.dot:nth-child(2) { animation-delay: 0.2s !important; }
+.dot:nth-child(3) { animation-delay: 0.4s !important; }
+@keyframes chatDotBounce {
+  0%, 80%, 100% { transform: translateY(0); }
+  40%           { transform: translateY(-6px); }
+}
+
+/* 입력창 영역 */
+.chatbot-input-area {
+  display: flex !important;
+  padding: 12px !important;
+  gap: 8px !important;
+  border-top: 1px solid #e8e8e8 !important;
+  background: #ffffff !important;  /* ⭐ */
+  flex-shrink: 0 !important;
+}
+#chatbot-input {
+  flex: 1 !important;
+  border: 1px solid #dddddd !important;
+  border-radius: 20px !important;
+  padding: 8px 14px !important;
+  font-size: 13px !important;
+  outline: none !important;
+  background: #ffffff !important;  /* ⭐ */
+  color: #1a1a1a !important;       /* ⭐ */
+}
+#chatbot-input:focus {
+  border-color: #1a1a2e !important;
+}
+#chatbot-input::placeholder {
+  color: #999999 !important;       /* ⭐ */
+}
+.chatbot-send {
+  background: #1a1a2e !important;
+  color: #ffffff !important;
+  border: none !important;
+  border-radius: 20px !important;
+  padding: 8px 16px !important;
+  cursor: pointer !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+}
+.chatbot-send:hover {
+  background: #2d2d4e !important;
+}
+
+/* 모바일 대응 */
+@media (max-width: 480px) {
+  .chatbot-window {
+    width: calc(100vw - 24px) !important;
+    right: 12px !important;
+    bottom: 80px !important;
+  }
+}

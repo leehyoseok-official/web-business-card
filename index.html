@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <!-- Anti-FOUC: apply saved theme before first paint -->
+  <script>(function(){var t=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t)})();</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Primary SEO -->
+  <title>이효석 | 남성복 상품기획 MD 팀장</title>
+  <meta name="description" content="18년 이상 경력의 남성복 상품기획 MD 팀장 이효석의 웹 명함입니다.">
+  <meta name="author" content="이효석">
+  <meta name="robots" content="index, follow">
+
+  <!-- Open Graph -->
+  <meta property="og:type"         content="profile">
+  <meta property="og:title"        content="이효석 | 남성복 상품기획 MD 팀장">
+  <meta property="og:description"  content="18년 이상 상품기획 MD로 활동해온 패션 상품기획 전문가입니다.">
+  <meta property="og:url"          content="https://example.com">
+  <meta property="og:image"        content="https://example.com/og-image.png">
+  <meta property="og:image:width"  content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:locale"       content="ko_KR">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:title"       content="이효석 | 남성복 상품기획 MD 팀장">
+  <meta name="twitter:description" content="18년 이상 상품기획 MD로 활동해온 패션 상품기획 전문가입니다.">
+  <meta name="twitter:image"       content="https://example.com/og-image.png">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ─── Dark / Light toggle ──────────────────────────────────────── -->
+  <button class="theme-toggle" id="themeToggle" aria-label="다크 모드로 전환">
+    <!-- Sun — shown in dark mode -->
+    <svg class="icon icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+         fill="none" stroke="currentColor" stroke-width="2"
+         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="5"/>
+      <line x1="12" y1="1"  x2="12" y2="3"/>
+      <line x1="12" y1="21" x2="12" y2="23"/>
+      <line x1="4.22"  y1="4.22"  x2="5.64"  y2="5.64"/>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+      <line x1="1"  y1="12" x2="3"  y2="12"/>
+      <line x1="21" y1="12" x2="23" y2="12"/>
+      <line x1="4.22"  y1="19.78" x2="5.64"  y2="18.36"/>
+      <line x1="18.36" y1="5.64"  x2="19.78" y2="4.22"/>
+    </svg>
+    <!-- Moon — shown in light mode -->
+    <svg class="icon icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+         fill="none" stroke="currentColor" stroke-width="2"
+         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+    </svg>
+  </button>
+
+  <!-- ─── Card ─────────────────────────────────────────────────────── -->
+  <main class="page">
+    <article class="card" itemscope itemtype="https://schema.org/Person">
+
+      <!-- Profile header -->
+      <header class="profile">
+        <div class="avatar-wrap">
+          <img
+            src="pic.png"
+            alt="이효석 프로필 사진"
+            class="avatar"
+            width="96" height="96"
+            itemprop="image"
+            onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
+          >
+          <div class="avatar-initial" style="display:none" aria-hidden="true">이</div>
+        </div>
+        <h1 class="name" itemprop="name">이효석</h1>
+        <p class="name-en">LEE HYO SEOK</p>
+        <p class="job-title" itemprop="jobTitle">남성복 상품기획 MD 팀장</p>
+        <p class="company" itemprop="worksFor">-</p>
+      </header>
+
+      <!-- Bio -->
+      <section class="section" aria-label="소개">
+        <p class="bio" itemprop="description">
+          18년 이상 상품기획 MD로 활동해온 베테랑 전문가<br>
+          남성복 전 카테고리를 아우르는 상품기획 역량 보유<br>
+          브루노바피팀 팀장으로서 7년간 조직 관리<br>
+          정장·자켓·코트·셔츠·타이 등 포멀웨어 전 아이템 기획·관리 및 캐주얼 신규 라인 런칭 주도
+        </p>
+      </section>
+
+      <!-- Core Skills -->
+      <section class="section" aria-labelledby="skills-title">
+        <h2 class="section-label" id="skills-title">Core Skills</h2>
+        <ul class="tags" role="list">
+          <li>포멀웨어</li>
+          <li>상품기획</li>
+          <li>생산 &amp; 원가</li>
+          <li>매출 &amp; 재고</li>
+          <li>브랜드 전략</li>
+          <li>협업 커뮤니케이션</li>
+          <li>신규 브랜드 런칭</li>
+        </ul>
+      </section>
+
+      <!-- Career Highlights -->
+      <section class="section" aria-labelledby="career-title">
+        <h2 class="section-label" id="career-title">Career Highlights</h2>
+        <ul class="timeline" role="list">
+          <li class="timeline-item">
+            <time class="period" datetime="2007">2007–</time>
+            <div>
+              <strong class="role">(주)세정 남성복 MD</strong>
+              <span class="org">액세서리~포멀 전 카테고리 경험</span>
+            </div>
+          </li>
+          <li class="timeline-item">
+            <time class="period">2018–2025.01</time>
+            <div>
+              <strong class="role">브루노바피팀 팀장</strong>
+              <span class="org">(주)세정</span>
+            </div>
+          </li>
+          <li class="timeline-item">
+            <time class="period">—</time>
+            <div>
+              <strong class="role">캐주얼 신규 라인 런칭 리딩</strong>
+              <span class="org">(주)세정</span>
+            </div>
+          </li>
+          <li class="timeline-item">
+            <time class="period" datetime="2025-02">2025.02–</time>
+            <div>
+              <strong class="role">신규사업TF</strong>
+              <span class="org">(주)세정</span>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+      <!-- Connect -->
+      <section class="section" aria-labelledby="connect-title">
+        <h2 class="section-label" id="connect-title">Connect</h2>
+        <nav class="links" aria-label="연락처 및 소셜 링크">
+          <a href="mailto:leehyoseok.official@gmail.com" class="btn btn-email" itemprop="email">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+              <polyline points="22,6 12,13 2,6"/>
+            </svg>
+            Email
+          </a>
+          <a href="https://www.linkedin.com/in/이효석" class="btn btn-linkedin"
+             target="_blank" rel="noopener noreferrer">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
+              <rect x="2" y="9" width="4" height="12"/>
+              <circle cx="4" cy="4" r="2"/>
+            </svg>
+            LinkedIn
+          </a>
+          <!-- TODO: 포트폴리오 URL을 확정한 뒤 href="#" 을 실제 URL로 교체하세요 -->
+          <a href="portfolio.html" class="btn btn-portfolio"
+             aria-label="포트폴리오">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="2" y="3" width="20" height="14" rx="2"/>
+              <line x1="8" y1="21" x2="16" y2="21"/>
+              <line x1="12" y1="17" x2="12" y2="21"/>
+            </svg>
+            Portfolio
+          </a>
+        </nav>
+      </section>
+
+      <!-- vCard download -->
+      <footer class="card-footer">
+        <button class="btn btn-vcf" id="vcfDownload">
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          연락처 저장 (.vcf)
+        </button>
+        <p class="copyright">© 2025 이효석</p>
+      </footer>
+
+    </article>
+  </main>
+
+  <script src="script.js"></script>
+  <link rel="stylesheet" href="css/chatbot.css">
+  <script src="js/chatbot.js"></script>
+</body>
+</html>

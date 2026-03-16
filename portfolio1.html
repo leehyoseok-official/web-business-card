@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>이효석 | 포트폴리오</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --dark:    #111111;
+  --card:    #1a1a1a;
+  --mid:     #232323;
+  --border:  #2e2e2e;
+  --text:    #e0e0e0;
+  --muted:   #888888;
+  --accent:  #c9a96e;
+  --accent2: #7a8fa0;
+  --white:   #ffffff;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--dark);
+  color: var(--text);
+  font-family: 'Noto Sans KR', sans-serif;
+  font-weight: 300;
+  font-size: 14px;
+  line-height: 1.75;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── BOTTOM NAV ── */
+.bottom-nav {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 200;
+  background: rgba(17,17,17,0.96);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid var(--border);
+  display: flex;
+  padding-bottom: var(--safe-bottom);
+}
+.bnav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 0 8px;
+  text-decoration: none;
+  color: var(--muted);
+  gap: 3px;
+  transition: color 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.bnav-item.active { color: var(--accent); }
+.bnav-icon { font-size: 18px; line-height: 1; }
+.bnav-label { font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  position: relative;
+  overflow: hidden;
+  padding-bottom: 72px;
+}
+.hero-bg-img {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(160deg, #0c0c0c 0%, #1a1a1a 55%, #0e1318 100%);
+}
+.hero-grid-pattern {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(201,169,110,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201,169,110,0.05) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+.hero-photo-area {
+  position: absolute;
+  top: 0; right: 0;
+  width: 58%;
+  height: 70%;
+  overflow: hidden;
+}
+.hero-photo-area img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  filter: brightness(0.7) grayscale(15%);
+}
+.hero-photo-area::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, var(--dark) 0%, transparent 40%),
+              linear-gradient(to top, var(--dark) 0%, transparent 45%);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  padding: 0 24px 32px;
+}
+.hero-tag {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.hero-tag::before {
+  content: '';
+  width: 24px;
+  height: 1px;
+  background: var(--accent);
+  display: block;
+  flex-shrink: 0;
+}
+.hero-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(52px, 14vw, 72px);
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--white);
+  margin-bottom: 6px;
+}
+.hero-name em { color: var(--accent); font-style: normal; }
+.hero-subtitle {
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 28px;
+}
+.hero-stats {
+  display: flex;
+  gap: 28px;
+  margin-bottom: 28px;
+}
+.stat { display: flex; flex-direction: column; }
+.stat-n {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 34px;
+  font-weight: 600;
+  color: var(--accent);
+  line-height: 1;
+}
+.stat-l {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-top: 3px;
+}
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(201,169,110,0.1);
+  border: 1px solid rgba(201,169,110,0.25);
+  padding: 7px 14px;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+
+/* ── SECTION COMMON ── */
+.section { padding: 60px 0; }
+.section-inner { padding: 0 24px; }
+
+.sec-label {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.sec-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+.sec-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(26px, 7vw, 36px);
+  font-weight: 300;
+  color: var(--white);
+  line-height: 1.15;
+  margin-bottom: 36px;
+}
+
+/* ── PROFILE ── */
+.profile-section { background: var(--card); }
+
+.profile-photo-row {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  margin-bottom: 32px;
+}
+.profile-photo {
+  width: 96px;
+  height: 120px;
+  object-fit: cover;
+  object-position: center top;
+  flex-shrink: 0;
+  filter: grayscale(10%);
+  border: 1px solid var(--border);
+}
+.profile-meta { flex: 1; }
+.pname {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px;
+  font-weight: 300;
+  color: var(--white);
+  line-height: 1.1;
+}
+.peng {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+.info-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 9px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.info-row:last-child { border-bottom: none; }
+.info-key {
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  min-width: 44px;
+  margin-top: 1px;
+  flex-shrink: 0;
+}
+.info-val { font-size: 13px; color: #b8b8b8; word-break: break-all; }
+
+.divider { height: 1px; background: var(--border); margin: 28px 0; }
+
+.edu-block { margin-bottom: 16px; }
+.edu-period { font-size: 10px; letter-spacing: 0.1em; color: var(--accent); margin-bottom: 3px; }
+.edu-school { font-size: 14px; color: var(--white); }
+.edu-dept { font-size: 12px; color: var(--muted); }
+
+.skill-row { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.skill-icon {
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px;
+  background: var(--mid);
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.skill-info { flex: 1; }
+.skill-name { font-size: 11px; color: var(--muted); margin-bottom: 5px; }
+.skill-bar { height: 2px; background: var(--border); overflow: hidden; }
+.skill-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), #e0c090);
+  transition: width 1.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.skill-pct { font-size: 11px; color: var(--accent); min-width: 24px; text-align: right; }
+
+.tag-wrap { display: flex; flex-wrap: wrap; gap: 7px; }
+.tag { padding: 5px 11px; border: 1px solid var(--border); font-size: 11px; color: var(--muted); letter-spacing: 0.04em; }
+
+/* ── CAREER ── */
+.career-section { background: var(--dark); }
+.timeline { padding-left: 28px; position: relative; }
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 8px; bottom: 0;
+  width: 1px;
+  background: linear-gradient(to bottom, var(--accent) 0%, rgba(201,169,110,0.08) 100%);
+}
+.tl-item {
+  position: relative;
+  padding-bottom: 40px;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.55s ease, transform 0.55s ease;
+}
+.tl-item.visible { opacity: 1; transform: translateY(0); }
+.tl-item:last-child { padding-bottom: 0; }
+.tl-dot {
+  position: absolute;
+  left: -34px; top: 5px;
+  width: 12px; height: 12px;
+  border: 2px solid var(--accent);
+  background: var(--dark);
+  transform: rotate(45deg);
+  transition: background 0.3s;
+}
+.tl-item.visible .tl-dot { background: var(--accent); }
+.tl-period { font-size: 10px; letter-spacing: 0.15em; color: var(--accent); text-transform: uppercase; margin-bottom: 6px; }
+.tl-role { font-size: 17px; color: var(--white); font-weight: 500; margin-bottom: 2px; }
+.tl-company { font-size: 11px; color: var(--accent2); letter-spacing: 0.08em; margin-bottom: 8px; }
+.tl-desc { font-size: 13px; color: #909090; line-height: 1.8; }
+
+/* ── WORK ── */
+.work-section { background: var(--card); }
+.work-cards { display: flex; flex-direction: column; gap: 2px; }
+.work-card { position: relative; overflow: hidden; aspect-ratio: 16/9; }
+.work-card img {
+  width: 100%; height: 100%; object-fit: cover;
+  filter: grayscale(25%) brightness(0.7);
+  transition: transform 0.6s ease;
+}
+.work-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.1) 60%, transparent 100%);
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 20px;
+}
+.work-tag {
+  font-size: 9px; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase;
+  margin-bottom: 5px; display: flex; align-items: center; gap: 7px;
+}
+.work-tag::before { content: ''; width: 16px; height: 1px; background: var(--accent); }
+.work-card-title { font-size: 20px; color: var(--white); font-weight: 500; margin-bottom: 4px; }
+.work-card-sub { font-size: 12px; color: #b0b0b0; }
+
+/* ── ITEMS ── */
+.items-section { background: var(--dark); }
+.items-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.item-card {
+  background: var(--mid);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.item-card.visible { opacity: 1; transform: translateY(0); }
+.item-card:nth-child(2) { transition-delay: 0.07s; }
+.item-card:nth-child(3) { transition-delay: 0.14s; }
+.item-card:nth-child(4) { transition-delay: 0.21s; }
+.item-card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; display: block; }
+.item-label { padding: 10px 12px; font-size: 11px; color: var(--muted); letter-spacing: 0.06em; text-align: center; border-top: 1px solid var(--border); }
+.subsec-gap { margin-top: 52px; }
+
+/* ── CONTACT ── */
+.contact-section {
+  background: var(--mid);
+  border-top: 1px solid var(--border);
+  padding: 52px 0 calc(80px + var(--safe-bottom));
+}
+.contact-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 42px; font-weight: 300; color: var(--white); line-height: 1; margin-bottom: 4px;
+}
+.contact-name em { color: var(--accent); font-style: normal; }
+.contact-role { font-size: 11px; color: var(--muted); letter-spacing: 0.1em; margin-bottom: 36px; }
+.contact-links { display: flex; flex-direction: column; }
+.contact-link {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+  text-decoration: none; color: #b0b0b0; font-size: 13px;
+  transition: color 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.contact-link:first-child { border-top: 1px solid var(--border); }
+.c-icon {
+  width: 34px; height: 34px;
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; flex-shrink: 0; background: var(--dark);
+}
+
+footer {
+  background: var(--dark);
+  padding: 20px 24px;
+  text-align: center;
+  font-size: 10px; color: #555; letter-spacing: 0.1em;
+  border-top: 1px solid var(--border);
+}
+
+.fade-up {
+  opacity: 0; transform: translateY(16px);
+  transition: opacity 0.55s ease, transform 0.55s ease;
+}
+.fade-up.visible { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="hero-bg-img"></div>
+  <div class="hero-grid-pattern"></div>
+  <div class="hero-photo-area">
+    <img src="pic.png" alt="이효석" onerror="this.parentElement.style.display='none'">
+  </div>
+  <div class="hero-content">
+    <p class="hero-tag">Portfolio</p>
+    <h1 class="hero-name">이효석<em>.</em></h1>
+    <p class="hero-subtitle">Merchandising Director · Men's Fashion</p>
+    <div class="hero-stats">
+      <div class="stat">
+        <span class="stat-n">18<span style="font-size:16px;color:var(--muted)">+</span></span>
+        <span class="stat-l">Years</span>
+      </div>
+      <div class="stat">
+        <span class="stat-n">全</span>
+        <span class="stat-l">Category</span>
+      </div>
+      <div class="stat">
+        <span class="stat-n">MD</span>
+        <span class="stat-l">Director</span>
+      </div>
+    </div>
+    <div class="hero-badge">Last Update · 2025.12</div>
+  </div>
+</section>
+
+<!-- PROFILE -->
+<section class="section profile-section" id="profile">
+  <div class="section-inner">
+    <p class="sec-label">About</p>
+    <h2 class="sec-title">Profile</h2>
+
+    <div class="profile-photo-row fade-up">
+      <img class="profile-photo" src="pic.png" alt="이효석" onerror="this.style.background='#2a2a2a';this.removeAttribute('src')">
+      <div class="profile-meta">
+        <p class="pname">이효석</p>
+        <p class="peng">Lee Hyo Seok</p>
+        <div class="info-row"><span class="info-key">생년</span><span class="info-val">1981. 10. 03</span></div>
+        <div class="info-row"><span class="info-key">연락처</span><span class="info-val">010-2567-4866</span></div>
+        <div class="info-row"><span class="info-key">이메일</span><span class="info-val">leehyoseok.official@gmail.com</span></div>
+        <div class="info-row"><span class="info-key">주소</span><span class="info-val">부산시 해운대구 해운대로 428</span></div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <p class="sec-label fade-up">Education</p>
+    <div class="fade-up">
+      <div class="edu-block">
+        <p class="edu-period">2000 – 2006</p>
+        <p class="edu-school">부산대학교</p>
+        <p class="edu-dept">의류학과 학사 졸업</p>
+      </div>
+      <div class="edu-block">
+        <p class="edu-period">1997 – 2000</p>
+        <p class="edu-school">부산 혜광고등학교</p>
+        <p class="edu-dept">졸업</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <p class="sec-label fade-up">Tools &amp; Skills</p>
+    <div class="fade-up" id="skill-block">
+      <div class="skill-row">
+        <div class="skill-icon">📊</div>
+        <div class="skill-info">
+          <p class="skill-name">Microsoft Excel</p>
+          <div class="skill-bar"><div class="skill-fill" data-w="80%" style="width:0%"></div></div>
+        </div>
+        <span class="skill-pct">80</span>
+      </div>
+      <div class="skill-row">
+        <div class="skill-icon">📑</div>
+        <div class="skill-info">
+          <p class="skill-name">Microsoft PowerPoint</p>
+          <div class="skill-bar"><div class="skill-fill" data-w="80%" style="width:0%"></div></div>
+        </div>
+        <span class="skill-pct">80</span>
+      </div>
+      <div class="skill-row">
+        <div class="skill-icon">🤖</div>
+        <div class="skill-info">
+          <p class="skill-name">AI Tools</p>
+          <div class="skill-bar"><div class="skill-fill" data-w="70%" style="width:0%"></div></div>
+        </div>
+        <span class="skill-pct">70</span>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <p class="sec-label fade-up">Core Competencies</p>
+    <div class="tag-wrap fade-up">
+      <span class="tag">포멀웨어 기획</span>
+      <span class="tag">캐주얼 런칭</span>
+      <span class="tag">생산 &amp; 원가</span>
+      <span class="tag">매출 &amp; 재고</span>
+      <span class="tag">팀장 &amp; 조직관리</span>
+      <span class="tag">브랜드 전략</span>
+      <span class="tag">신규사업 기획</span>
+      <span class="tag">액세서리 MD</span>
+    </div>
+  </div>
+</section>
+
+<!-- CAREER -->
+<section class="section career-section" id="career">
+  <div class="section-inner">
+    <p class="sec-label">Experience</p>
+    <h2 class="sec-title">Career</h2>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <p class="tl-period">2025.02 – Present</p>
+        <h3 class="tl-role">신규사업TF 매니저</h3>
+        <p class="tl-company">(주)세정</p>
+        <p class="tl-desc">신규사업 태스크포스팀 매니저로 현재 근무 중. 18년간 축적한 상품기획 전문성을 바탕으로 신사업 전략 수립에 기여.</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <p class="tl-period">2018.03 – 2025.01</p>
+        <h3 class="tl-role">브루노바피팀 팀장</h3>
+        <p class="tl-company">(주)세정</p>
+        <p class="tl-desc">이탈리안 클래식 감성의 포멀웨어와 캐주얼웨어 전 라인 총괄. 팀 리드로서 상품기획 전략 수립 및 조직 운영, 신규 캐주얼 라인 런칭 리딩.</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <p class="tl-period">2011.12 – 2018.02</p>
+        <h3 class="tl-role">포멀팀 선임 MD</h3>
+        <p class="tl-company">(주)세정 · 브루노바피</p>
+        <p class="tl-desc">정장, 자켓, 바지, 셔츠, 코트, 타이, ACC 등 포멀 전 아이템 기획 및 관리. 브랜드 핵심 포멀웨어 상품전략 수행.</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <p class="tl-period">2007.01 – 2011.11</p>
+        <h3 class="tl-role">남/여성 액세서리 MD</h3>
+        <p class="tl-company">(주)세정 입사</p>
+        <p class="tl-desc">피혁잡화(가방, 지갑, 벨트), 섬유잡화(모자, 머플러 등) 남녀 전 카테고리 MD 업무 수행. 폭넓은 상품 카테고리 경험 기반 형성.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WORK -->
+<section class="section work-section" id="work">
+  <div class="section-inner">
+    <p class="sec-label">Work</p>
+    <h2 class="sec-title">브루노바피<br>팀장 업무</h2>
+  </div>
+  <div class="work-cards">
+    <div class="work-card">
+      <img src="https://images.unsplash.com/photo-1491336477066-31156b5e4f35?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="포멀웨어">
+      <div class="work-overlay">
+        <p class="work-tag">2018 – 2025</p>
+        <h3 class="work-card-title">포멀웨어</h3>
+        <p class="work-card-sub">이탈리안의 클래식한 가치 — 정장, 자켓, 코트 라인 총괄</p>
+      </div>
+    </div>
+    <div class="work-card">
+      <img src="https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?w=800&q=80" alt="캐주얼웨어">
+      <div class="work-overlay">
+        <p class="work-tag">2018 – 2025</p>
+        <h3 class="work-card-title">캐주얼웨어</h3>
+        <p class="work-card-sub">일상과 캐주얼의 균형 — 신규 캐주얼 라인 런칭 리딩</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CATEGORY -->
+<section class="section items-section">
+  <div class="section-inner">
+    <p class="sec-label">Category</p>
+    <h2 class="sec-title">포멀 선임 MD<br>담당 카테고리</h2>
+    <div class="items-grid">
+      <div class="item-card"><img src="https://images.unsplash.com/photo-1507679799987-c73779587ccf?q=80&w=2671&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="정장·자켓"><p class="item-label">정장 · 자켓</p></div>
+      <div class="item-card"><img src="https://images.unsplash.com/photo-1619603364904-c0498317e145?q=80&w=1287&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="코트"><p class="item-label">코트</p></div>
+      <div class="item-card"><img src="https://images.unsplash.com/photo-1603252109303-2751441dd157?q=80&w=1287&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="셔츠"><p class="item-label">셔츠</p></div>
+      <div class="item-card"><img src="https://plus.unsplash.com/premium_photo-1717529138572-4a6180db96c3?q=80&w=1322&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="타이·ACC"><p class="item-label">타이 · ACC</p></div>
+    </div>
+
+    <div class="subsec-gap">
+      <p class="sec-label">Previous</p>
+      <h2 class="sec-title" style="margin-bottom:24px;">액세서리 MD<br>담당 카테고리</h2>
+      <div class="items-grid">
+        <div class="item-card"><img src="https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400&q=80" alt="가방"><p class="item-label">가방</p></div>
+        <div class="item-card"><img src="https://images.unsplash.com/photo-1627123424574-724758594e93?w=400&q=80" alt="지갑·벨트"><p class="item-label">지갑 · 벨트</p></div>
+        <div class="item-card"><img src="https://images.unsplash.com/photo-1521369909029-2afed882baee?w=400&q=80" alt="모자"><p class="item-label">모자</p></div>
+        <div class="item-card"><img src="https://plus.unsplash.com/premium_photo-1695603438043-1b9ab6ebe1a8?q=80&w=1287&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="머플러"><p class="item-label">머플러</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact-section" id="contact">
+  <div class="section-inner">
+    <p class="sec-label">Contact</p>
+    <p class="contact-name">이효석<em>.</em></p>
+    <p class="contact-role">남성복 상품기획 MD 팀장 · (주)세정</p>
+    <div class="contact-links">
+      <a href="mailto:leehyoseok.official@gmail.com" class="contact-link">
+        <div class="c-icon">✉</div>leehyoseok.official@gmail.com
+      </a>
+      <a href="tel:010-2567-4866" class="contact-link">
+        <div class="c-icon">📞</div>010-2567-4866
+      </a>
+      <a href="index.html" class="contact-link">
+        <div class="c-icon">🔗</div>웹 명함 바로가기
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>© 2025 이효석 · Portfolio · Last Update 2025.12</footer>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <a href="#top"     class="bnav-item active"><span class="bnav-icon">⊙</span><span class="bnav-label">Home</span></a>
+  <a href="#profile" class="bnav-item"><span class="bnav-icon">◻</span><span class="bnav-label">Profile</span></a>
+  <a href="#career"  class="bnav-item"><span class="bnav-icon">◈</span><span class="bnav-label">Career</span></a>
+  <a href="#work"    class="bnav-item"><span class="bnav-icon">◇</span><span class="bnav-label">Work</span></a>
+  <a href="#contact" class="bnav-item"><span class="bnav-icon">◁</span><span class="bnav-label">Contact</span></a>
+</nav>
+
+<script>
+// Scroll reveal
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-up, .tl-item, .item-card').forEach(el => io.observe(el));
+
+// Skill bars
+const skillIo = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.querySelectorAll('.skill-fill').forEach(bar => { bar.style.width = bar.dataset.w; });
+      skillIo.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.3 });
+const sb = document.getElementById('skill-block');
+if (sb) skillIo.observe(sb);
+
+// Active bottom nav
+const sections = ['top','profile','career','work','contact'];
+const navMap = {};
+sections.forEach(id => {
+  const el = id === 'top' ? document.querySelector('.hero') : document.getElementById(id);
+  if (el) navMap[id] = el;
+});
+const navLinks = document.querySelectorAll('.bnav-item');
+const sio = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const id = e.target.id || 'top';
+      navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
+    }
+  });
+}, { threshold: 0.45 });
+Object.values(navMap).forEach(el => sio.observe(el));
+</script>
+</body>
+</html>

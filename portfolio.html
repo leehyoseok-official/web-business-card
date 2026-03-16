@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>이효석 | MD Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600&family=DM+Serif+Display&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --black: #0a0a0a;
+    --dark: #1a1a1a;
+    --mid: #3a3a3a;
+    --grey: #888;
+    --light-grey: #c8c8c8;
+    --off-white: #f5f4f0;
+    --white: #ffffff;
+    --accent: #1a1a1a;
+    --serif: 'DM Serif Display', 'Noto Serif KR', serif;
+    --sans: 'Noto Sans KR', sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--off-white);
+    color: var(--black);
+    font-family: var(--sans);
+    font-weight: 300;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100svh;
+    background: var(--black);
+    color: var(--white);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0 28px 52px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -40%;
+    right: -30%;
+    width: 70vw;
+    height: 70vw;
+    background: radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .hero-number {
+    position: absolute;
+    top: 48px;
+    right: 28px;
+    font-family: var(--serif);
+    font-size: 11rem;
+    line-height: 1;
+    color: rgba(255,255,255,0.04);
+    user-select: none;
+    letter-spacing: -4px;
+  }
+
+  .hero-tag {
+    display: inline-block;
+    border: 1px solid rgba(255,255,255,0.25);
+    color: var(--light-grey);
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    padding: 6px 14px;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+    width: fit-content;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s ease forwards;
+  }
+
+  .hero-name {
+    font-family: var(--serif);
+    font-size: 3.6rem;
+    line-height: 1.05;
+    letter-spacing: -1px;
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.4s ease forwards;
+  }
+
+  .hero-desc {
+    font-size: 0.88rem;
+    color: var(--light-grey);
+    line-height: 1.8;
+    max-width: 320px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.6s ease forwards;
+  }
+
+  .hero-scroll {
+    position: absolute;
+    bottom: 52px;
+    right: 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: var(--grey);
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    opacity: 0;
+    animation: fadeUp 0.8s 1s ease forwards;
+  }
+
+  .hero-scroll::after {
+    content: '';
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, var(--grey), transparent);
+    animation: scrollLine 2s 1.5s ease infinite;
+  }
+
+  @keyframes scrollLine {
+    0% { transform: scaleY(0); transform-origin: top; }
+    50% { transform: scaleY(1); transform-origin: top; }
+    51% { transform: scaleY(1); transform-origin: bottom; }
+    100% { transform: scaleY(0); transform-origin: bottom; }
+  }
+
+  /* ── NUMBERS ── */
+  .numbers-section {
+    background: var(--white);
+    padding: 64px 28px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+
+  .num-item {
+    padding: 28px 20px;
+    border-bottom: 1px solid #eee;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .num-item:nth-child(odd) { border-right: 1px solid #eee; }
+  .num-item.visible { opacity: 1; transform: translateY(0); }
+
+  .num-value {
+    font-family: var(--serif);
+    font-size: 3rem;
+    line-height: 1;
+    color: var(--black);
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .num-label {
+    font-size: 0.72rem;
+    color: var(--grey);
+    letter-spacing: 0.05em;
+    line-height: 1.5;
+  }
+
+  /* ── SECTION HEADER ── */
+  .section-header {
+    padding: 72px 28px 40px;
+  }
+
+  .section-tag {
+    display: inline-block;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--grey);
+    margin-bottom: 12px;
+  }
+
+  .section-title {
+    font-family: var(--serif);
+    font-size: 2.2rem;
+    line-height: 1.2;
+    color: var(--black);
+  }
+
+  /* ── EXPERTISE ── */
+  .expertise-section {
+    background: var(--off-white);
+    padding-bottom: 64px;
+  }
+
+  .expertise-list {
+    padding: 0 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .expertise-item {
+    border-top: 1px solid var(--light-grey);
+    padding: 28px 0;
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    gap: 16px;
+    align-items: start;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .expertise-item:last-child { border-bottom: 1px solid var(--light-grey); }
+  .expertise-item.visible { opacity: 1; transform: translateX(0); }
+
+  .expertise-num {
+    font-family: var(--serif);
+    font-size: 0.85rem;
+    color: var(--grey);
+    padding-top: 3px;
+  }
+
+  .expertise-title {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--black);
+    margin-bottom: 8px;
+  }
+
+  .expertise-desc {
+    font-size: 0.82rem;
+    color: var(--mid);
+    line-height: 1.7;
+  }
+
+  /* ── CAREER ── */
+  .career-section {
+    background: var(--black);
+    color: var(--white);
+    padding: 72px 28px 64px;
+  }
+
+  .career-section .section-tag { color: var(--grey); }
+  .career-section .section-title { color: var(--white); }
+
+  .career-timeline {
+    margin-top: 40px;
+    position: relative;
+    padding-left: 20px;
+  }
+
+  .career-timeline::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 8px;
+    bottom: 8px;
+    width: 1px;
+    background: rgba(255,255,255,0.12);
+  }
+
+  .career-item {
+    position: relative;
+    padding: 0 0 40px 28px;
+    opacity: 0;
+    transform: translateX(-16px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .career-item::before {
+    content: '';
+    position: absolute;
+    left: -4px;
+    top: 8px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--white);
+    border: 2px solid var(--black);
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.3);
+  }
+
+  .career-item.current::before {
+    background: var(--white);
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.15);
+  }
+
+  .career-item.visible { opacity: 1; transform: translateX(0); }
+
+  .career-period {
+    font-size: 0.7rem;
+    color: var(--grey);
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+  }
+
+  .career-role {
+    font-family: var(--serif);
+    font-size: 1.15rem;
+    color: var(--white);
+    line-height: 1.3;
+    margin-bottom: 6px;
+  }
+
+  .career-company {
+    font-size: 0.78rem;
+    color: var(--light-grey);
+    margin-bottom: 12px;
+  }
+
+  .career-points {
+    list-style: none;
+  }
+
+  .career-points li {
+    font-size: 0.80rem;
+    color: rgba(255,255,255,0.55);
+    line-height: 1.7;
+    padding-left: 12px;
+    position: relative;
+  }
+
+  .career-points li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: rgba(255,255,255,0.25);
+    font-size: 0.7rem;
+  }
+
+  /* ── PROJECTS ── */
+  .projects-section {
+    background: var(--white);
+    padding: 72px 0 64px;
+  }
+
+  .projects-section .section-header { padding-bottom: 32px; }
+
+  .project-card {
+    margin: 0 28px 20px;
+    background: var(--off-white);
+    padding: 32px 28px;
+    border-left: 3px solid var(--black);
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .project-card.visible { opacity: 1; transform: translateY(0); }
+
+  .project-tag {
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--grey);
+    margin-bottom: 12px;
+  }
+
+  .project-title {
+    font-family: var(--serif);
+    font-size: 1.4rem;
+    color: var(--black);
+    margin-bottom: 12px;
+    line-height: 1.3;
+  }
+
+  .project-desc {
+    font-size: 0.82rem;
+    color: var(--mid);
+    line-height: 1.75;
+    margin-bottom: 20px;
+  }
+
+  .project-result {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .result-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .result-value {
+    font-family: var(--serif);
+    font-size: 1.5rem;
+    color: var(--black);
+    line-height: 1;
+  }
+
+  .result-label {
+    font-size: 0.65rem;
+    color: var(--grey);
+    letter-spacing: 0.05em;
+  }
+
+  /* ── PHILOSOPHY ── */
+  .philosophy-section {
+    background: var(--off-white);
+    padding: 72px 28px;
+  }
+
+  .quote-block {
+    border-top: 1px solid var(--light-grey);
+    padding-top: 36px;
+    margin-top: 40px;
+  }
+
+  .quote-mark {
+    font-family: var(--serif);
+    font-size: 4rem;
+    line-height: 0.5;
+    color: var(--light-grey);
+    margin-bottom: 20px;
+    display: block;
+  }
+
+  .quote-text {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 1.05rem;
+    line-height: 1.9;
+    color: var(--dark);
+    font-weight: 300;
+    margin-bottom: 24px;
+  }
+
+  .quote-attr {
+    font-size: 0.72rem;
+    color: var(--grey);
+    letter-spacing: 0.1em;
+  }
+
+  /* ── SKILLS GRID ── */
+  .skills-section {
+    background: var(--white);
+    padding: 72px 28px 64px;
+  }
+
+  .skills-grid {
+    margin-top: 40px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .skill-chip {
+    border: 1px solid var(--light-grey);
+    padding: 14px 16px;
+    font-size: 0.78rem;
+    color: var(--dark);
+    letter-spacing: 0.02em;
+    background: var(--off-white);
+    opacity: 0;
+    transform: scale(0.95);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+
+  .skill-chip.visible { opacity: 1; transform: scale(1); }
+
+  .skill-chip-icon {
+    display: block;
+    font-size: 1.1rem;
+    margin-bottom: 6px;
+  }
+
+  /* ── CTA ── */
+  .cta-section {
+    background: var(--black);
+    padding: 80px 28px;
+    color: var(--white);
+    text-align: center;
+  }
+
+  .cta-title {
+    font-family: var(--serif);
+    font-size: 2.4rem;
+    line-height: 1.2;
+    margin-bottom: 16px;
+  }
+
+  .cta-sub {
+    font-size: 0.85rem;
+    color: var(--grey);
+    margin-bottom: 48px;
+    line-height: 1.7;
+  }
+
+  .cta-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .btn-primary {
+    display: block;
+    background: var(--white);
+    color: var(--black);
+    padding: 18px 28px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    font-family: var(--sans);
+    transition: opacity 0.2s;
+  }
+
+  .btn-secondary {
+    display: block;
+    border: 1px solid rgba(255,255,255,0.25);
+    color: var(--light-grey);
+    padding: 17px 28px;
+    font-size: 0.82rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    font-family: var(--sans);
+    transition: border-color 0.2s;
+  }
+
+  .btn-primary:active { opacity: 0.8; }
+  .btn-secondary:active { border-color: rgba(255,255,255,0.5); }
+
+  /* ── FOOTER ── */
+  .footer {
+    background: var(--dark);
+    padding: 32px 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-name {
+    font-family: var(--serif);
+    font-size: 1rem;
+    color: var(--white);
+  }
+
+  .footer-copy {
+    font-size: 0.65rem;
+    color: var(--grey);
+  }
+
+  /* ── NAV ── */
+  .nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    padding: 20px 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    mix-blend-mode: difference;
+    pointer-events: none;
+  }
+
+  .nav-name {
+    font-family: var(--serif);
+    font-size: 0.9rem;
+    color: var(--white);
+    letter-spacing: 0.02em;
+  }
+
+  .nav-back {
+    font-size: 0.7rem;
+    color: var(--white);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    pointer-events: all;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── DIVIDER ── */
+  .divider-line {
+    width: 40px;
+    height: 1px;
+    background: var(--light-grey);
+    margin: 20px 0;
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <span class="nav-name">이효석</span>
+  <a class="nav-back" href="https://leehyoseok.netlify.app/">← 명함</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-number">18</div>
+  <span class="hero-tag">MD Portfolio · 2025</span>
+  <h1 class="hero-name">남성복을<br>설계하는<br>사람</h1>
+  <p class="hero-desc">18년간 국내 대표 남성복 브랜드의<br>상품기획을 이끌어온 MD 팀장.<br>숫자로 증명하는 패션 전략가.</p>
+  <div class="hero-scroll">Scroll</div>
+</section>
+
+<!-- NUMBERS -->
+<section class="numbers-section">
+  <div class="num-item obs">
+    <span class="num-value">18+</span>
+    <span class="num-label">년간 남성복<br>MD 경력</span>
+  </div>
+  <div class="num-item obs">
+    <span class="num-value">7</span>
+    <span class="num-label">년 팀장으로<br>조직 리딩</span>
+  </div>
+  <div class="num-item obs">
+    <span class="num-value">全</span>
+    <span class="num-label">남성복 카테고리<br>기획 경험</span>
+  </div>
+  <div class="num-item obs">
+    <span class="num-value">1+</span>
+    <span class="num-label">신규 캐주얼<br>라인 런칭</span>
+  </div>
+</section>
+
+<!-- EXPERTISE -->
+<section class="expertise-section">
+  <div class="section-header">
+    <span class="section-tag">Expertise</span>
+    <h2 class="section-title">핵심<br>전문 역량</h2>
+  </div>
+  <ul class="expertise-list">
+    <li class="expertise-item obs">
+      <span class="expertise-num">01</span>
+      <div>
+        <div class="expertise-title">포멀웨어 전 카테고리 기획</div>
+        <div class="expertise-desc">정장·자켓·코트·셔츠·타이까지 포멀웨어의 전 아이템을 아우르는 상품기획 역량. 시즌 트렌드 분석부터 생산 발주, 재고 관리까지 원스톱으로 운영.</div>
+      </div>
+    </li>
+    <li class="expertise-item obs">
+      <span class="expertise-num">02</span>
+      <div>
+        <div class="expertise-title">신규 라인 런칭 리딩</div>
+        <div class="expertise-desc">캐주얼 신규 라인을 기획 단계부터 런칭까지 주도. 타깃 설정, 브랜드 포지셔닝, MD 선정, 시즌 구성안 수립의 전 과정을 총괄.</div>
+      </div>
+    </li>
+    <li class="expertise-item obs">
+      <span class="expertise-num">03</span>
+      <div>
+        <div class="expertise-title">매출·재고 최적화</div>
+        <div class="expertise-desc">매출 데이터 분석과 재고 회전율 관리를 통해 시즌 수익성을 극대화. 손실 최소화를 위한 선제적 재고 전략 수립 및 실행.</div>
+      </div>
+    </li>
+    <li class="expertise-item obs">
+      <span class="expertise-num">04</span>
+      <div>
+        <div class="expertise-title">팀 조직 관리 & 협업</div>
+        <div class="expertise-desc">7년간 브루노바피팀 팀장으로서 MD 팀원 육성 및 유관 부서(디자인·생산·영업) 협업 조율. 목표 달성을 위한 실행력 있는 팀 리딩.</div>
+      </div>
+    </li>
+    <li class="expertise-item obs">
+      <span class="expertise-num">05</span>
+      <div>
+        <div class="expertise-title">원가 기획 & 벤더 관리</div>
+        <div class="expertise-desc">원가 분석과 국내외 벤더 협상을 통한 적정 마진 확보. 품질과 가격 경쟁력을 동시에 실현하는 소싱 전략 수립 경험 보유.</div>
+      </div>
+    </li>
+  </ul>
+</section>
+
+<!-- CAREER -->
+<section class="career-section">
+  <span class="section-tag">Career</span>
+  <h2 class="section-title" style="color:var(--white);font-family:var(--serif);font-size:2.2rem;line-height:1.2;margin-top:12px;">커리어<br>타임라인</h2>
+
+  <div class="career-timeline">
+    <div class="career-item current obs">
+      <div class="career-period">2025.02 — Present</div>
+      <div class="career-role">신규사업 TF</div>
+      <div class="career-company">(주)세정</div>
+      <ul class="career-points">
+        <li>신규 사업 방향 기획 및 전략 수립 참여</li>
+        <li>기존 MD 역량 기반 사업 확장 모색</li>
+      </ul>
+    </div>
+    <div class="career-item obs">
+      <div class="career-period">2018 — 2025.01</div>
+      <div class="career-role">브루노바피팀 팀장</div>
+      <div class="career-company">(주)세정</div>
+      <ul class="career-points">
+        <li>7년간 팀장으로 MD 조직 총괄 운영</li>
+        <li>포멀·캐주얼 통합 라인업 전략 수립</li>
+        <li>캐주얼 신규 라인 런칭 리딩</li>
+      </ul>
+    </div>
+    <div class="career-item obs">
+      <div class="career-period">2007 — 2018</div>
+      <div class="career-role">남성복 MD</div>
+      <div class="career-company">(주)세정</div>
+      <ul class="career-points">
+        <li>액세서리~포멀 전 카테고리 기획 경험 축적</li>
+        <li>시즌별 상품 구성안 수립 및 실행</li>
+        <li>생산·원가·재고 관리 역량 내재화</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section class="projects-section">
+  <div class="section-header">
+    <span class="section-tag">Key Projects</span>
+    <h2 class="section-title">대표<br>프로젝트</h2>
+  </div>
+
+  <div class="project-card obs">
+    <div class="project-tag">Brand Launch</div>
+    <div class="project-title">캐주얼 신규 라인<br>런칭 총괄</div>
+    <div class="project-desc">포멀 중심의 브루노바피에 캐주얼 라인을 추가하는 신규 사업을 기획 단계부터 주도. 타깃 고객 분석, 상품 구성 전략, 벤더 선정, 시즌 MD 플랜 수립까지 전 과정을 리딩하여 성공적으로 런칭.</div>
+    <div class="project-result">
+      <div class="result-item">
+        <span class="result-value">新</span>
+        <span class="result-label">카테고리 개척</span>
+      </div>
+      <div class="result-item">
+        <span class="result-value">全</span>
+        <span class="result-label">기획 주도</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="project-card obs">
+    <div class="project-tag">Team Management</div>
+    <div class="project-title">MD팀 장기<br>안정적 운영</div>
+    <div class="project-desc">7년간 브루노바피팀을 이끌며 팀원 성장과 조직 안정화를 동시에 실현. 시즌마다 변화하는 시장 환경에 유연하게 대응하는 팀 문화와 실행력을 구축.</div>
+    <div class="project-result">
+      <div class="result-item">
+        <span class="result-value">7yr</span>
+        <span class="result-label">팀 운영 기간</span>
+      </div>
+      <div class="result-item">
+        <span class="result-value">안정</span>
+        <span class="result-label">조직 리텐션</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="project-card obs">
+    <div class="project-tag">Full Category MD</div>
+    <div class="project-title">남성복 全 카테고리<br>경험 축적</div>
+    <div class="project-desc">입사 초기부터 액세서리, 캐주얼, 포멀까지 남성복의 모든 카테고리를 순환하며 기획·운영 경험을 체계적으로 쌓음. 특정 아이템에 국한되지 않는 넓은 시각과 깊은 전문성을 동시에 보유.</div>
+    <div class="project-result">
+      <div class="result-item">
+        <span class="result-value">18+</span>
+        <span class="result-label">년 경력</span>
+      </div>
+      <div class="result-item">
+        <span class="result-value">全</span>
+        <span class="result-label">카테고리</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PHILOSOPHY -->
+<section class="philosophy-section">
+  <div class="section-header" style="padding:0 0 0 0;">
+    <span class="section-tag">Philosophy</span>
+    <h2 class="section-title" style="margin-top:12px;">일하는<br>방식</h2>
+  </div>
+  <div class="quote-block">
+    <span class="quote-mark">"</span>
+    <p class="quote-text">좋은 MD는 트렌드를 읽는 감각과<br>숫자를 다루는 냉정함을<br>동시에 가져야 합니다.<br>저는 18년간 그 두 가지를<br>함께 훈련해왔습니다.</p>
+    <span class="quote-attr">— 이효석, MD 팀장</span>
+  </div>
+  <div class="divider-line" style="margin-top:36px;"></div>
+  <p style="font-size:0.83rem;color:var(--mid);line-height:1.85;margin-top:28px;">데이터 기반의 상품 전략과 현장에서 쌓아온 감각을 결합해 시즌마다 실패를 줄이고 성과를 높이는 방식으로 일합니다. 팀원과 함께 성장하고, 유관 부서와 긴밀하게 협력하며, 결과로 증명하는 MD입니다.</p>
+</section>
+
+<!-- SKILLS -->
+<section class="skills-section">
+  <div class="section-header" style="padding-left:0;padding-right:0;">
+    <span class="section-tag">Skills</span>
+    <h2 class="section-title" style="margin-top:12px;">전문<br>스킬셋</h2>
+  </div>
+  <div class="skills-grid">
+    <div class="skill-chip obs"><span class="skill-chip-icon">👔</span>포멀웨어 기획</div>
+    <div class="skill-chip obs"><span class="skill-chip-icon">📊</span>상품 전략</div>
+    <div class="skill-chip obs"><span class="skill-chip-icon">🏭</span>생산 & 원가</div>
+    <div class="skill-chip obs"><span class="skill-chip-icon">📦</span>재고 관리</div>
+    <div class="skill-chip obs"><span class="skill-chip-icon">🚀</span>신규 라인 런칭</div>
+    <div class="skill-chip obs"><span class="skill-chip-icon">👥</span>팀 조직 관리</div>
+    <div class="skill-chip obs"><span class="skill-chip-icon">🤝</span>벤더 협상</div>
+    <div class="skill-chip obs"><span class="skill-chip-icon">🎯</span>브랜드 전략</div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <h2 class="cta-title">함께<br>일하고<br>싶으시다면</h2>
+  <p class="cta-sub">18년의 경험과 함께하는<br>남성복 MD 전문가</p>
+  <div class="cta-buttons">
+    <a href="mailto:leehyoseok.official@gmail.com" class="btn-primary">이메일로 연락하기</a>
+    <a href="https://www.linkedin.com/in/이효석" class="btn-secondary">LinkedIn 프로필</a>
+    <a href="https://leehyoseok.netlify.app/" class="btn-secondary">← 디지털 명함</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <span class="footer-name">이효석</span>
+  <span class="footer-copy">© 2025 All rights reserved</span>
+</footer>
+
+<script>
+  // Intersection Observer for scroll animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        const el = entry.target;
+        const siblings = Array.from(el.parentElement?.children || [el]).filter(c => c.classList.contains('obs'));
+        const delay = siblings.indexOf(el) * 80;
+        setTimeout(() => el.classList.add('visible'), delay);
+        observer.unobserve(el);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.obs').forEach(el => observer.observe(el));
+</script>
+  <link rel="stylesheet" href="css/chatbot.css">
+  <script src="js/chatbot.js"></script>
+</body>
+</html>
