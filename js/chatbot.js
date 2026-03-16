@@ -130,6 +130,7 @@ function toggleChat() {
 
 function openChat() {
   isOpen = true;
+  chatPanel.style.display = 'flex';
   chatPanel.classList.add('chat-panel--open');
   chatPanel.setAttribute('aria-hidden', 'false');
   chatToggleBtn.classList.add('chat-toggle-btn--open');
@@ -139,6 +140,7 @@ function openChat() {
 
 function closeChat() {
   isOpen = false;
+  chatPanel.style.display = 'none';
   chatPanel.classList.remove('chat-panel--open');
   chatPanel.setAttribute('aria-hidden', 'true');
   chatToggleBtn.classList.remove('chat-toggle-btn--open');
