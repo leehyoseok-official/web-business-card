@@ -334,6 +334,53 @@
     font-size: 0.7rem;
   }
 
+  /* ── 커리어 아이템 태그 (PPTX 카테고리 뱃지) ── */
+  .career-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 12px;
+  }
+
+  .career-tag-badge {
+    font-size: 0.62rem;
+    letter-spacing: 0.05em;
+    padding: 4px 10px;
+    border: 1px solid rgba(255,255,255,0.2);
+    color: rgba(255,255,255,0.6);
+    border-radius: 2px;
+  }
+
+  /* ── BRAND IDENTITY (브루노바피 브랜드 방향성) ── */
+  .brand-identity {
+    margin-top: 16px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .brand-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 14px 16px;
+  }
+
+  .brand-card-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--grey);
+    margin-bottom: 6px;
+  }
+
+  .brand-card-value {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.75);
+    line-height: 1.5;
+    font-weight: 300;
+  }
+
   /* ── PROJECTS ── */
   .projects-section {
     background: var(--white);
@@ -400,6 +447,25 @@
     font-size: 0.65rem;
     color: var(--grey);
     letter-spacing: 0.05em;
+  }
+
+  /* ── 담당 아이템 목록 (PPTX 아이템 리스트) ── */
+  .item-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .item-badge {
+    font-size: 0.63rem;
+    padding: 4px 10px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.14);
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 0.04em;
   }
 
   /* ── PHILOSOPHY ── */
@@ -674,6 +740,13 @@
         <div class="expertise-desc">원가 분석과 국내외 벤더 협상을 통한 적정 마진 확보. 품질과 가격 경쟁력을 동시에 실현하는 소싱 전략 수립 경험 보유.</div>
       </div>
     </li>
+    <li class="expertise-item obs">
+      <span class="expertise-num">06</span>
+      <div>
+        <div class="expertise-title">액세서리 상품기획</div>
+        <div class="expertise-desc">남·여성 피혁잡화(가방·지갑·벨트) 및 섬유잡화(모자·머플러 등) 전 카테고리 기획 경험 보유. 액세서리부터 포멀까지 아우르는 폭넓은 상품 감각.</div>
+      </div>
+    </li>
   </ul>
 </section>
 
@@ -683,35 +756,85 @@
   <h2 class="section-title" style="color:var(--white);font-family:var(--serif);font-size:2.2rem;line-height:1.2;margin-top:12px;">커리어<br>타임라인</h2>
 
   <div class="career-timeline">
+
+    <!-- 신규사업TF -->
     <div class="career-item current obs">
       <div class="career-period">2025.02 — Present</div>
-      <div class="career-role">신규사업 TF</div>
+      <div class="career-role">신규사업 TF 매니저</div>
       <div class="career-company">(주)세정</div>
       <ul class="career-points">
         <li>신규 사업 방향 기획 및 전략 수립 참여</li>
         <li>기존 MD 역량 기반 사업 확장 모색</li>
       </ul>
     </div>
+
+    <!-- 브루노바피 팀장 -->
     <div class="career-item obs">
-      <div class="career-period">2018 — 2025.01</div>
+      <div class="career-period">2018.03 — 2025.01</div>
       <div class="career-role">브루노바피팀 팀장</div>
       <div class="career-company">(주)세정</div>
       <ul class="career-points">
         <li>7년간 팀장으로 MD 조직 총괄 운영</li>
         <li>포멀·캐주얼 통합 라인업 전략 수립</li>
         <li>캐주얼 신규 라인 런칭 리딩</li>
+        <li>포멀웨어 전 아이템 상품기획 및 관리</li>
       </ul>
+      <!-- PPTX 브랜드 방향성 추가 -->
+      <div class="brand-identity">
+        <div class="brand-card">
+          <div class="brand-card-label">Formal</div>
+          <div class="brand-card-value">이탈리안의<br>클래식한 가치</div>
+        </div>
+        <div class="brand-card">
+          <div class="brand-card-label">Casual</div>
+          <div class="brand-card-value">일상과<br>캐주얼의 균형</div>
+        </div>
+      </div>
     </div>
+
+    <!-- 브루노바피 포멀 선임MD (PPTX에서 분리) -->
     <div class="career-item obs">
-      <div class="career-period">2007 — 2018</div>
-      <div class="career-role">남성복 MD</div>
+      <div class="career-period">2011.12 — 2018.02</div>
+      <div class="career-role">브루노바피 포멀 선임MD</div>
       <div class="career-company">(주)세정</div>
       <ul class="career-points">
-        <li>액세서리~포멀 전 카테고리 기획 경험 축적</li>
-        <li>시즌별 상품 구성안 수립 및 실행</li>
+        <li>포멀 전 아이템 상품기획 실무 주도</li>
+        <li>시즌별 라인업 구성안 수립 및 실행</li>
         <li>생산·원가·재고 관리 역량 내재화</li>
       </ul>
+      <!-- PPTX 담당 아이템 목록 추가 -->
+      <div class="item-list">
+        <span class="item-badge">정장</span>
+        <span class="item-badge">자켓</span>
+        <span class="item-badge">바지</span>
+        <span class="item-badge">셔츠</span>
+        <span class="item-badge">코트</span>
+        <span class="item-badge">타이</span>
+        <span class="item-badge">ACC</span>
+      </div>
     </div>
+
+    <!-- 액세서리 MD (PPTX에서 분리) -->
+    <div class="career-item obs">
+      <div class="career-period">2007.01 — 2011.11</div>
+      <div class="career-role">남/여성 액세서리 상품기획 MD</div>
+      <div class="career-company">(주)세정 입사</div>
+      <ul class="career-points">
+        <li>남·여성 액세서리 카테고리 상품기획 담당</li>
+        <li>피혁잡화 및 섬유잡화 전 아이템 기획·운영</li>
+        <li>소재·디자인 트렌드 분석 및 시즌 MD 수립</li>
+      </ul>
+      <!-- PPTX 담당 아이템 목록 추가 -->
+      <div class="item-list">
+        <span class="item-badge">가방</span>
+        <span class="item-badge">지갑</span>
+        <span class="item-badge">벨트</span>
+        <span class="item-badge">모자</span>
+        <span class="item-badge">머플러</span>
+        <span class="item-badge">기타 섬유잡화</span>
+      </div>
+    </div>
+
   </div>
 </section>
 
@@ -757,7 +880,7 @@
   <div class="project-card obs">
     <div class="project-tag">Full Category MD</div>
     <div class="project-title">남성복 全 카테고리<br>경험 축적</div>
-    <div class="project-desc">입사 초기부터 액세서리, 캐주얼, 포멀까지 남성복의 모든 카테고리를 순환하며 기획·운영 경험을 체계적으로 쌓음. 특정 아이템에 국한되지 않는 넓은 시각과 깊은 전문성을 동시에 보유.</div>
+    <div class="project-desc">입사 초기 액세서리(피혁잡화·섬유잡화)를 시작으로, 포멀 선임MD를 거쳐 팀장까지. 남성복의 모든 카테고리를 순환하며 기획·운영 경험을 체계적으로 쌓음. 특정 아이템에 국한되지 않는 넓은 시각과 깊은 전문성을 동시에 보유.</div>
     <div class="project-result">
       <div class="result-item">
         <span class="result-value">18+</span>
@@ -801,6 +924,8 @@
     <div class="skill-chip obs"><span class="skill-chip-icon">👥</span>팀 조직 관리</div>
     <div class="skill-chip obs"><span class="skill-chip-icon">🤝</span>벤더 협상</div>
     <div class="skill-chip obs"><span class="skill-chip-icon">🎯</span>브랜드 전략</div>
+    <div class="skill-chip obs"><span class="skill-chip-icon">👜</span>액세서리 기획</div>
+    <div class="skill-chip obs"><span class="skill-chip-icon">✂️</span>소재 & 디자인</div>
   </div>
 </section>
 
@@ -809,7 +934,7 @@
   <h2 class="cta-title">함께<br>일하고<br>싶으시다면</h2>
   <p class="cta-sub">18년의 경험과 함께하는<br>남성복 MD 전문가</p>
   <div class="cta-buttons">
-    <a href="mailto:leehyoseok.official@gmail.com" class="btn-primary">이메일로 연락하기</a>
+    <a href="/cdn-cgi/l/email-protection#137f76767b6a7c60767c783d7c75757a707a727f53747e727a7f3d707c7e" class="btn-primary">이메일로 연락하기</a>
     <a href="https://www.linkedin.com/in/이효석" class="btn-secondary">LinkedIn 프로필</a>
     <a href="https://leehyoseok-official.github.io/web-business-card/" class="btn-secondary">← 디지털 명함</a>
   </div>
@@ -821,7 +946,7 @@
   <span class="footer-copy">© 2025 All rights reserved</span>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
   // Intersection Observer for scroll animations
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry, i) => {
