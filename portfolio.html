@@ -659,6 +659,150 @@
     background: var(--light-grey);
     margin: 20px 0;
   }
+
+  /* ══════════════════════════════════════
+     DESKTOP (768px+)
+  ══════════════════════════════════════ */
+  @media (min-width: 768px) {
+
+    /* 공통 컨테이너 */
+    .hero,
+    .numbers-section,
+    .expertise-section,
+    .career-section,
+    .projects-section,
+    .philosophy-section,
+    .skills-section,
+    .cta-section,
+    .footer { padding-left: 0; padding-right: 0; }
+
+    .hero { padding-bottom: 80px; }
+
+    .inner {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 0 60px;
+    }
+
+    /* NAV */
+    .nav { padding: 28px 60px; }
+
+    /* HERO */
+    .hero-content {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 0 60px 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: flex-end;
+      gap: 60px;
+    }
+    .hero-name { font-size: 5.5rem; }
+    .hero-desc { max-width: 400px; font-size: 1rem; }
+    .hero-number { font-size: 18rem; right: 60px; }
+
+    /* NUMBERS */
+    .numbers-section {
+      padding: 80px 60px;
+      grid-template-columns: repeat(4, 1fr);
+      max-width: 100%;
+    }
+    .num-item:nth-child(odd) { border-right: none; }
+    .num-item { border-right: 1px solid #eee; border-bottom: none; }
+    .num-item:last-child { border-right: none; }
+    .num-value { font-size: 4rem; }
+
+    /* SECTION HEADER */
+    .section-header { padding: 96px 60px 48px; }
+
+    /* EXPERTISE */
+    .expertise-section { padding-bottom: 96px; }
+    .expertise-list {
+      padding: 0 60px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 60px;
+    }
+    .expertise-item { border-top: 1px solid var(--light-grey); }
+    .expertise-item:last-child { border-bottom: none; }
+    .expertise-title { font-size: 1.1rem; }
+    .expertise-desc { font-size: 0.88rem; }
+
+    /* CAREER */
+    .career-section { padding: 96px 0 80px; }
+    .career-section > .section-tag,
+    .career-section > h2 { padding-left: 60px; padding-right: 60px; }
+    .career-timeline {
+      max-width: 1080px;
+      margin: 48px auto 0;
+      padding-left: 80px;
+      padding-right: 60px;
+    }
+    .career-item { padding-bottom: 56px; }
+    .career-role { font-size: 1.5rem; }
+    .career-points li { font-size: 0.88rem; }
+
+    /* PROJECTS */
+    .projects-section .section-header { padding-left: 60px; padding-right: 60px; }
+    .projects-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      padding: 0 60px;
+    }
+    .project-card {
+      margin: 0;
+      padding: 40px 32px;
+    }
+    .project-card:last-child {
+      grid-column: 1 / -1;
+    }
+    .project-title { font-size: 1.7rem; }
+    .project-desc { font-size: 0.88rem; }
+
+    /* PHILOSOPHY */
+    .philosophy-section { padding: 96px 60px; }
+    .philosophy-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+      margin-top: 48px;
+    }
+    .quote-block { border-top: none; padding-top: 0; margin-top: 0; }
+    .quote-text { font-size: 1.2rem; }
+
+    /* SKILLS */
+    .skills-section { padding: 96px 60px 80px; }
+    .skills-grid {
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+    }
+    .skill-chip { padding: 18px 20px; font-size: 0.83rem; }
+
+    /* CTA */
+    .cta-section { padding: 120px 60px; }
+    .cta-title { font-size: 4rem; }
+    .cta-buttons {
+      flex-direction: row;
+      justify-content: center;
+      gap: 16px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .btn-primary, .btn-secondary {
+      display: inline-block;
+      padding: 18px 36px;
+    }
+
+    /* FOOTER */
+    .footer { padding: 40px 60px; }
+  }
+
+  @media (min-width: 1200px) {
+    .hero-name { font-size: 7rem; }
+    .num-value { font-size: 5rem; }
+  }
 </style>
 </head>
 <body>
@@ -666,15 +810,19 @@
 <!-- NAV -->
 <nav class="nav">
   <span class="nav-name">이효석</span>
-  <a class="nav-back" href="https://leehyoseok-official.github.io/web-business-card/">← 명함</a>
+  <a class="nav-back" href="https://leehyoseok.vercel.app/">← 명함</a>
 </nav>
 
 <!-- HERO -->
 <section class="hero">
   <div class="hero-number">18</div>
-  <span class="hero-tag">MD Portfolio · 2025</span>
-  <h1 class="hero-name">남성복을<br>설계하는<br>사람</h1>
-  <p class="hero-desc">18년간 국내 대표 남성복 브랜드의<br>상품기획을 이끌어온 MD 팀장.<br>숫자로 증명하는 패션 전략가.</p>
+  <div class="hero-content">
+    <div>
+      <span class="hero-tag">MD Portfolio · 2025</span>
+      <h1 class="hero-name">남성복을<br>설계하는<br>사람</h1>
+    </div>
+    <p class="hero-desc">18년간 국내 대표 남성복 브랜드의<br>상품기획을 이끌어온 MD 팀장.<br>숫자로 증명하는 패션 전략가.</p>
+  </div>
   <div class="hero-scroll">Scroll</div>
 </section>
 
@@ -845,6 +993,7 @@
     <h2 class="section-title">대표<br>프로젝트</h2>
   </div>
 
+  <div class="projects-grid">
   <div class="project-card obs">
     <div class="project-tag">Brand Launch</div>
     <div class="project-title">캐주얼 신규 라인<br>런칭 총괄</div>
@@ -892,6 +1041,7 @@
       </div>
     </div>
   </div>
+  </div><!-- /projects-grid -->
 </section>
 
 <!-- PHILOSOPHY -->
@@ -900,13 +1050,17 @@
     <span class="section-tag">Philosophy</span>
     <h2 class="section-title" style="margin-top:12px;">일하는<br>방식</h2>
   </div>
-  <div class="quote-block">
-    <span class="quote-mark">"</span>
-    <p class="quote-text">좋은 MD는 트렌드를 읽는 감각과<br>숫자를 다루는 냉정함을<br>동시에 가져야 합니다.<br>저는 18년간 그 두 가지를<br>함께 훈련해왔습니다.</p>
-    <span class="quote-attr">— 이효석, MD 팀장</span>
+  <div class="philosophy-inner">
+    <div class="quote-block">
+      <span class="quote-mark">"</span>
+      <p class="quote-text">좋은 MD는 트렌드를 읽는 감각과<br>숫자를 다루는 냉정함을<br>동시에 가져야 합니다.<br>저는 18년간 그 두 가지를<br>함께 훈련해왔습니다.</p>
+      <span class="quote-attr">— 이효석, MD 팀장</span>
+    </div>
+    <div>
+      <div class="divider-line"></div>
+      <p style="font-size:0.83rem;color:var(--mid);line-height:1.85;margin-top:28px;">데이터 기반의 상품 전략과 현장에서 쌓아온 감각을 결합해 시즌마다 실패를 줄이고 성과를 높이는 방식으로 일합니다. 팀원과 함께 성장하고, 유관 부서와 긴밀하게 협력하며, 결과로 증명하는 MD입니다.</p>
+    </div>
   </div>
-  <div class="divider-line" style="margin-top:36px;"></div>
-  <p style="font-size:0.83rem;color:var(--mid);line-height:1.85;margin-top:28px;">데이터 기반의 상품 전략과 현장에서 쌓아온 감각을 결합해 시즌마다 실패를 줄이고 성과를 높이는 방식으로 일합니다. 팀원과 함께 성장하고, 유관 부서와 긴밀하게 협력하며, 결과로 증명하는 MD입니다.</p>
 </section>
 
 <!-- SKILLS -->
@@ -936,7 +1090,7 @@
   <div class="cta-buttons">
     <a href="/cdn-cgi/l/email-protection#137f76767b6a7c60767c783d7c75757a707a727f53747e727a7f3d707c7e" class="btn-primary">이메일로 연락하기</a>
     <a href="https://www.linkedin.com/in/이효석" class="btn-secondary">LinkedIn 프로필</a>
-    <a href="https://leehyoseok-official.github.io/web-business-card/" class="btn-secondary">← 디지털 명함</a>
+    <a href="https://leehyoseok.vercel.app/" class="btn-secondary">← 디지털 명함</a>
   </div>
 </section>
 
