@@ -4,7 +4,7 @@
    Chatbot — 이효석 MD AI 비서
    ========================================================================== */
 
-const CHATBOT_API = '/.netlify/functions/chat';
+const CHATBOT_API = '/api/chat';
 
 /* ---------- State -------------------------------------------------------- */
 let isOpen = false;

@@ -1,0 +1,9 @@
+{
+  "name": "web-businesscard",
+  "version": "1.0.0",
+  "description": "이효석 MD 웹 명함 + AI 챗봇",
+  "private": true,
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.54.0"
+  }
+}
