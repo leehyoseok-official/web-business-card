@@ -487,3 +487,86 @@ section:last-of-type {
   color: #2ee878;
   border-color: rgba(3,199,90,.25);
 }
+
+/* ==========================================================================
+   My Pages — link cards
+   ========================================================================== */
+.page-links {
+  display: flex;
+  flex-direction: column;
+  gap: .625rem;
+}
+
+.page-link-card {
+  display: flex;
+  align-items: center;
+  gap: .875rem;
+  padding: .875rem 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  text-decoration: none;
+  transition: transform .15s, box-shadow .15s, border-color .15s;
+  background: var(--card-bg);
+}
+.page-link-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0,0,0,.1);
+}
+
+.page-link-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.page-link-icon svg { width: 20px; height: 20px; }
+
+.page-link-info {
+  flex: 1;
+  min-width: 0;
+}
+.page-link-name {
+  display: block;
+  font-size: .875rem;
+  font-weight: 600;
+  color: var(--text-1);
+}
+.page-link-desc {
+  display: block;
+  font-size: .75rem;
+  color: var(--text-2);
+  margin-top: .15rem;
+}
+
+.page-link-arrow {
+  width: 16px;
+  height: 16px;
+  color: var(--text-2);
+  flex-shrink: 0;
+}
+
+/* Blog */
+.page-link-blog { border-color: #bbf7d0; }
+.page-link-blog:hover { border-color: #03C75A; }
+.page-link-blog .page-link-icon { background: #f0fdf4; color: #03C75A; }
+
+/* Fashion AI */
+.page-link-ai { border-color: #e9d5ff; }
+.page-link-ai:hover { border-color: #7c3aed; }
+.page-link-ai .page-link-icon { background: #faf5ff; color: #7c3aed; }
+
+/* Portfolio */
+.page-link-portfolio { border-color: #bfdbfe; }
+.page-link-portfolio:hover { border-color: #1d4ed8; }
+.page-link-portfolio .page-link-icon { background: #eff6ff; color: #1d4ed8; }
+
+/* Dark mode */
+[data-theme="dark"] .page-link-blog    { border-color: rgba(3,199,90,.25); }
+[data-theme="dark"] .page-link-blog .page-link-icon { background: rgba(3,199,90,.12); }
+[data-theme="dark"] .page-link-ai     { border-color: rgba(124,58,237,.3); }
+[data-theme="dark"] .page-link-ai .page-link-icon { background: rgba(124,58,237,.15); }
+[data-theme="dark"] .page-link-portfolio { border-color: rgba(29,78,216,.3); }
+[data-theme="dark"] .page-link-portfolio .page-link-icon { background: rgba(29,78,216,.15); }
