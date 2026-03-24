@@ -433,15 +433,14 @@ section:last-of-type {
     align-items: center;
   }
 
-  /* 3-column layout for link buttons */
+  /* Link buttons: 3-column grid, wraps to next row if more than 3 */
   .links {
     flex-direction: row;
+    flex-wrap: wrap;
   }
 
-  .btn-email,
-  .btn-linkedin,
-  .btn-portfolio {
-    flex: 1;
+  .links .btn {
+    flex: 1 1 calc(33.33% - 6px);
     font-size: .875rem;
   }
 }
