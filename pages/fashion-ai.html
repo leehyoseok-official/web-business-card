@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>40·50대 남성 패션 AI | 이효석 MD</title>
+  <meta name="description" content="18년 경력 남성복 MD 이효석의 전문 지식을 담은 AI 패션 어시스턴트. 40·50대 남성을 위한 맞춤 스타일 조언.">
+
+  <link rel="icon" type="image/png" href="../assets/pic.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:   #0f1b2d;
+      --navy2:  #1a2d45;
+      --gold:   #c8a97e;
+      --gold2:  #e0c99a;
+      --white:  #ffffff;
+      --gray50: #f8f8f6;
+      --gray100:#f0ede8;
+      --gray300:#d4cfc7;
+      --gray500:#8c8278;
+      --gray700:#4a4540;
+      --text:   #1a1a1a;
+      --radius: 12px;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Noto Sans KR', 'Inter', sans-serif;
+      background: var(--gray50);
+      color: var(--text);
+    }
+
+    /* ── Layout ── */
+    .app {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      max-width: 760px;
+      margin: 0 auto;
+      background: var(--white);
+      box-shadow: 0 0 60px rgba(0,0,0,0.08);
+    }
+
+    /* ── Header ── */
+    .header {
+      background: var(--navy);
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .header-badge {
+      width: 42px;
+      height: 42px;
+      background: var(--gold);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--navy);
+      flex-shrink: 0;
+    }
+    .header-title {
+      color: var(--white);
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+    .header-sub {
+      color: rgba(255,255,255,0.55);
+      font-size: 11.5px;
+      margin-top: 2px;
+    }
+    .header-back {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      color: rgba(255,255,255,0.65);
+      text-decoration: none;
+      font-size: 12.5px;
+      transition: color 0.2s;
+    }
+    .header-back:hover { color: var(--gold); }
+    .header-back svg { width: 14px; height: 14px; }
+
+    /* ── Intro banner ── */
+    .intro-banner {
+      background: var(--navy2);
+      border-bottom: 1px solid rgba(200,169,126,0.2);
+      padding: 14px 20px;
+      flex-shrink: 0;
+    }
+    .intro-text {
+      color: rgba(255,255,255,0.75);
+      font-size: 12.5px;
+      line-height: 1.65;
+    }
+    .intro-text strong { color: var(--gold); font-weight: 600; }
+
+    /* ── Messages ── */
+    .messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      scroll-behavior: smooth;
+    }
+
+    .msg { display: flex; }
+    .msg--bot  { justify-content: flex-start; }
+    .msg--user { justify-content: flex-end; }
+
+    .bubble {
+      max-width: 78%;
+      padding: 12px 16px;
+      font-size: 14px;
+      line-height: 1.7;
+      word-break: break-word;
+      white-space: pre-wrap;
+    }
+    .msg--bot .bubble {
+      background: var(--gray100);
+      color: var(--text);
+      border-radius: 4px 16px 16px 16px;
+      border: 1px solid var(--gray300);
+    }
+    .msg--user .bubble {
+      background: var(--navy);
+      color: var(--white);
+      border-radius: 16px 4px 16px 16px;
+    }
+
+    /* Typing */
+    .bubble--typing {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 14px 18px;
+    }
+    .bubble--typing span {
+      width: 7px; height: 7px;
+      background: var(--gray500);
+      border-radius: 50%;
+      animation: dot 1.2s infinite;
+    }
+    .bubble--typing span:nth-child(2) { animation-delay: 0.2s; }
+    .bubble--typing span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes dot {
+      0%,80%,100% { transform: translateY(0); opacity: 0.4; }
+      40% { transform: translateY(-6px); opacity: 1; }
+    }
+
+    /* ── Quick suggestions ── */
+    .suggestions {
+      padding: 12px 16px 6px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      flex-shrink: 0;
+      border-top: 1px solid var(--gray100);
+    }
+    .suggestions-label {
+      width: 100%;
+      font-size: 11px;
+      color: var(--gray500);
+      font-weight: 500;
+      margin-bottom: 4px;
+      letter-spacing: 0.3px;
+    }
+    .chip {
+      background: var(--white);
+      border: 1px solid var(--gray300);
+      color: var(--gray700);
+      border-radius: 20px;
+      padding: 6px 13px;
+      font-size: 12.5px;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+    .chip:hover {
+      background: var(--navy);
+      border-color: var(--navy);
+      color: var(--white);
+    }
+    .chip:active { transform: scale(0.97); }
+
+    /* ── Input area ── */
+    .input-area {
+      padding: 12px 16px 16px;
+      border-top: 1px solid var(--gray100);
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+      flex-shrink: 0;
+      background: var(--white);
+    }
+    .chat-input {
+      flex: 1;
+      border: 1.5px solid var(--gray300);
+      border-radius: 22px;
+      padding: 10px 16px;
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      resize: none;
+      line-height: 1.5;
+      max-height: 100px;
+      overflow-y: auto;
+      transition: border-color 0.2s;
+      background: var(--gray50);
+      color: var(--text);
+    }
+    .chat-input:focus { border-color: var(--navy); background: var(--white); }
+    .chat-input::placeholder { color: var(--gray500); }
+
+    .send-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--navy);
+      border: none;
+      color: var(--white);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.2s, transform 0.1s;
+    }
+    .send-btn:hover:not(:disabled) { background: var(--navy2); }
+    .send-btn:active:not(:disabled) { transform: scale(0.93); }
+    .send-btn:disabled { opacity: 0.35; cursor: default; }
+    .send-btn svg { width: 17px; height: 17px; }
+
+    /* ── Footer credit ── */
+    .footer-credit {
+      text-align: center;
+      padding: 8px 0 12px;
+      font-size: 11px;
+      color: var(--gray500);
+      border-top: 1px solid var(--gray100);
+      flex-shrink: 0;
+    }
+    .footer-credit a {
+      color: var(--gold);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .footer-credit a:hover { text-decoration: underline; }
+
+    /* ── Mobile ── */
+    @media (max-width: 480px) {
+      .bubble { max-width: 86%; font-size: 13.5px; }
+      .header-title { font-size: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-left">
+      <div class="header-badge">패</div>
+      <div>
+        <div class="header-title">40·50대 남성 패션 AI</div>
+        <div class="header-sub">18년 MD 전문 지식 기반 스타일 조언</div>
+      </div>
+    </div>
+    <a href="../index.html" class="header-back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"/>
+        <polyline points="12 19 5 12 12 5"/>
+      </svg>
+      명함으로
+    </a>
+  </header>
+
+  <!-- Intro -->
+  <div class="intro-banner">
+    <p class="intro-text">
+      <strong>이효석 MD의 18년 남성복 전문 지식</strong>을 담은 AI입니다.
+      직장·경조사·골프·여행 등 상황에 맞는 스타일 조언을 드립니다.
+    </p>
+  </div>
+
+  <!-- Messages -->
+  <div class="messages" id="messages">
+    <div class="msg msg--bot">
+      <div class="bubble">안녕하세요! 👔<br>40·50대 남성 패션 AI입니다.<br><br>어떤 상황의 코디가 고민이신가요? 직장·결혼식·여행·골프 등 무엇이든 편하게 물어보세요.</div>
+    </div>
+  </div>
+
+  <!-- Quick Suggestions -->
+  <div class="suggestions" id="suggestions">
+    <div class="suggestions-label">추천 질문</div>
+    <button class="chip" data-q="50대 직장인이 결혼식 하객으로 입기 좋은 수트 색상과 코디를 추천해 주세요.">결혼식 하객룩</button>
+    <button class="chip" data-q="40대 팀장이 비즈니스 캐주얼 데이로 입기 좋은 코디를 추천해 주세요.">비즈니스 캐주얼</button>
+    <button class="chip" data-q="골프 라운딩에 어울리는 40-50대 남성 코디 추천해 주세요.">골프 라운딩</button>
+    <button class="chip" data-q="여름 해외여행에 짐을 줄이면서도 깔끔하게 입을 수 있는 코디법을 알려주세요.">여행 코디</button>
+    <button class="chip" data-q="50대 남성이 나이보다 젊고 세련되어 보이는 스타일링 팁을 알려주세요.">젊어 보이는 스타일</button>
+    <button class="chip" data-q="봄·가을에 활용하기 좋은 남성 재킷 추천과 코디법을 알려주세요.">재킷 코디법</button>
+  </div>
+
+  <!-- Input -->
+  <div class="input-area">
+    <textarea
+      id="chatInput"
+      class="chat-input"
+      placeholder="패션 고민을 입력하세요..."
+      rows="1"
+      maxlength="1000"
+    ></textarea>
+    <button id="sendBtn" class="send-btn" disabled aria-label="전송">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="22" y1="2" x2="11" y2="13"/>
+        <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer-credit">
+    Made by <a href="../index.html">이효석 MD</a> · Powered by Claude AI
+  </div>
+
+</div>
+
+<script>
+'use strict';
+
+const API_URL = '/api/fashion-chat';
+
+const messagesEl = document.getElementById('messages');
+const chatInput  = document.getElementById('chatInput');
+const sendBtn    = document.getElementById('sendBtn');
+const suggestions = document.getElementById('suggestions');
+
+const history = [];
+let isLoading = false;
+
+/* ── Auto-resize textarea ── */
+chatInput.addEventListener('input', () => {
+  chatInput.style.height = 'auto';
+  chatInput.style.height = Math.min(chatInput.scrollHeight, 100) + 'px';
+  sendBtn.disabled = chatInput.value.trim() === '' || isLoading;
+});
+
+/* ── Send on Enter (Shift+Enter = newline) ── */
+chatInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    if (!sendBtn.disabled) send();
+  }
+});
+
+sendBtn.addEventListener('click', send);
+
+/* ── Quick suggestion chips ── */
+document.querySelectorAll('.chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    chatInput.value = chip.dataset.q;
+    chatInput.style.height = 'auto';
+    chatInput.style.height = Math.min(chatInput.scrollHeight, 100) + 'px';
+    sendBtn.disabled = false;
+    // Hide suggestions after first use
+    suggestions.style.display = 'none';
+    send();
+  });
+});
+
+/* ── Core send ── */
+async function send() {
+  const text = chatInput.value.trim();
+  if (!text || isLoading) return;
+
+  chatInput.value = '';
+  chatInput.style.height = 'auto';
+  sendBtn.disabled = true;
+  suggestions.style.display = 'none';
+
+  appendMsg('user', text);
+  history.push({ role: 'user', content: text });
+
+  setLoading(true);
+  const typingEl = appendTyping();
+
+  try {
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages: history }),
+    });
+
+    const data = await res.json();
+    typingEl.remove();
+
+    if (!res.ok || data.error) {
+      appendMsg('bot', data.error || '오류가 발생했습니다. 다시 시도해 주세요.');
+    } else {
+      appendMsg('bot', data.content);
+      history.push({ role: 'assistant', content: data.content });
+    }
+  } catch {
+    typingEl.remove();
+    appendMsg('bot', '네트워크 오류가 발생했습니다. 연결을 확인하고 다시 시도해 주세요.');
+  } finally {
+    setLoading(false);
+  }
+}
+
+/* ── Helpers ── */
+function appendMsg(role, text) {
+  const div = document.createElement('div');
+  div.className = `msg msg--${role === 'user' ? 'user' : 'bot'}`;
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble';
+  bubble.textContent = text;
+  div.appendChild(bubble);
+  messagesEl.appendChild(div);
+  scrollDown();
+}
+
+function appendTyping() {
+  const div = document.createElement('div');
+  div.className = 'msg msg--bot';
+  div.innerHTML = `<div class="bubble bubble--typing"><span></span><span></span><span></span></div>`;
+  messagesEl.appendChild(div);
+  scrollDown();
+  return div;
+}
+
+function setLoading(state) {
+  isLoading = state;
+  chatInput.disabled = state;
+  sendBtn.disabled = state;
+}
+
+function scrollDown() {
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+</script>
+
+</body>
+</html>
