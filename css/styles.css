@@ -80,6 +80,8 @@ body {
   align-items: flex-start;
   justify-content: center;
   -webkit-font-smoothing: antialiased;
+  word-break: keep-all;          /* Korean: break between words, not syllables */
+  overflow-wrap: break-word;
   transition: background-color .3s ease, color .3s ease;
 }
 
@@ -298,7 +300,8 @@ body {
 
 .period {
   flex-shrink: 0;
-  min-width: 96px;
+  width: 108px;
+  white-space: nowrap;
   font-size: .8125rem;
   color: var(--text-3);
   font-variant-numeric: tabular-nums;
@@ -487,6 +490,7 @@ body {
 @media (max-width: 479px) {
   body {
     align-items: stretch;
+    background: var(--card-bg);   /* seamless overscroll on full-bleed card */
   }
 
   .page {

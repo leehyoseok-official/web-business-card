@@ -1,0 +1,365 @@
+/* ==========================================================================
+   AI Tool pages — Apple design layer
+   Loaded after each page's inline <style>. The pages keep their original
+   token names (--black = page background, --white = primary text,
+   --gold = accent) and this file remaps them to the Apple palette, in
+   light and dark, following the same data-theme switch as index.html.
+   ========================================================================== */
+
+:root {
+  color-scheme: light;
+
+  --black:      #F5F5F7;   /* page background */
+  --surface:    #FFFFFF;   /* cards, panels */
+  --white:      #1D1D1F;   /* primary text */
+  --cream:      #1D1D1F;
+  --gray-100:   #1D1D1F;   /* body text */
+  --gray-300:   #424245;   /* secondary text, labels */
+  --gray-500:   #6E6E73;   /* tertiary text */
+  --gray-700:   #86868B;   /* quaternary text */
+
+  --gold:       #0071E3;   /* accent */
+  --gold-light: #0077ED;   /* accent hover */
+  --gold-dark:  #0058B0;
+  --accent:       #248A3D;
+  --accent-light: #248A3D;
+
+  --green: #248A3D;
+  --red:   #D70015;
+  --amber: #C93400;
+  --blue:  #0071E3;
+  --green-dim: color-mix(in srgb, var(--green) 12%, transparent);
+  --red-dim:   color-mix(in srgb, var(--red)   12%, transparent);
+  --amber-dim: color-mix(in srgb, var(--amber) 12%, transparent);
+  --blue-dim:  color-mix(in srgb, var(--blue)  12%, transparent);
+
+  --fill:      rgba(120, 120, 128, .12);
+  --separator: rgba(60, 60, 67, .16);
+  --on-accent: #FFFFFF;
+  --shadow:    0 2px 8px rgba(0, 0, 0, .04), 0 12px 40px rgba(0, 0, 0, .06);
+
+  --font:         -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo',
+                  'Pretendard', system-ui, 'Malgun Gothic', sans-serif;
+  --font-display: var(--font);
+  --font-mono:    var(--font);
+  --radius:       14px;
+  --radius-sm:    10px;
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --black:      #000000;
+  --surface:    #1C1C1E;
+  --white:      #F5F5F7;
+  --cream:      #F5F5F7;
+  --gray-100:   #F5F5F7;
+  --gray-300:   #D1D1D6;
+  --gray-500:   #A1A1A6;
+  --gray-700:   #8E8E93;
+
+  --gold:       #2997FF;
+  --gold-light: #47A6FF;
+  --gold-dark:  #0A84FF;
+  --accent:       #30D158;
+  --accent-light: #30D158;
+
+  --green: #30D158;
+  --red:   #FF453A;
+  --amber: #FF9F0A;
+  --blue:  #0A84FF;
+
+  --fill:      rgba(120, 120, 128, .24);
+  --separator: rgba(84, 84, 88, .55);
+  --shadow:    none;
+}
+
+/* ── Base ─────────────────────────────────────────────── */
+body {
+  font-family: var(--font);
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  word-break: keep-all;          /* Korean: break between words, not syllables */
+  overflow-wrap: break-word;
+  transition: background-color .3s ease, color .3s ease;
+}
+
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+/* ── Navigation bar — translucent material ───────────── */
+nav {
+  background: color-mix(in srgb, var(--black) 72%, transparent);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid var(--separator);
+  padding-top: env(safe-area-inset-top);
+}
+.nav-logo {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -.01em;
+  text-transform: none;
+  color: var(--white);
+}
+.nav-links a {
+  font-size: 13px;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--gray-500);
+}
+.nav-links a:hover,
+.nav-links a.active { color: var(--white); }
+.nav-links a.active { font-weight: 600; }
+.nav-badge {
+  font-size: 12px;
+  letter-spacing: 0;
+  color: var(--gray-500);
+}
+
+/* ── Hero ─────────────────────────────────────────────── */
+.hero h1 {
+  font-family: var(--font);
+  font-weight: 700;
+  letter-spacing: -.03em;
+  line-height: 1.08;
+}
+.hero h1 em {
+  font-style: normal;
+  color: var(--gold);
+}
+.hero-eyebrow {
+  letter-spacing: .02em;
+  font-weight: 600;
+}
+.hero-eyebrow::before { display: none; }
+.hero-desc {
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--gray-500);
+}
+.stat {
+  border-left: none;
+  padding-left: 0;
+}
+.stat-num {
+  font-weight: 700;
+  letter-spacing: -.02em;
+}
+
+/* ── Surfaces: white cards on grey, no hairline clutter ─ */
+.form-panel,
+.section-card,
+.diag-banner,
+.report-banner,
+.positioning-banner,
+.plan-meta,
+.streaming-state {
+  background: var(--surface);
+  border-color: transparent;
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+}
+.form-panel { padding: 2rem; }
+.section-card:hover { border-color: transparent; }
+
+.metric-card,
+.risk-card,
+.trend-keyword-card,
+.ref-card,
+.strategy-card {
+  border-radius: var(--radius);
+}
+
+.empty-state {
+  border: none;
+  background: var(--surface);
+  border-radius: 20px;
+}
+.empty-title {
+  font-family: var(--font);
+  font-weight: 600;
+  letter-spacing: -.01em;
+}
+.empty-sub { color: var(--gray-500); }
+
+/* Panel / output titles read as headlines, not eyebrows */
+.panel-title,
+.output-title {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -.01em;
+  text-transform: none;
+  color: var(--white);
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+/* ── Form controls ────────────────────────────────────── */
+label {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--gray-300);
+}
+select,
+input[type="text"],
+input[type="number"],
+textarea,
+.tag-input-wrap {
+  background-color: var(--fill);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font-size: 16px;   /* ≥16px prevents iOS zoom-on-focus */
+  font-weight: 400;
+  color: var(--white);
+  min-height: 44px;
+}
+select:focus,
+input:focus,
+textarea:focus,
+.tag-input-wrap:focus-within {
+  background-color: var(--surface);
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--gold) 20%, transparent);
+}
+select option { background: var(--surface); color: var(--white); }
+::placeholder { color: var(--gray-700); }
+
+/* ── Primary button ───────────────────────────────────── */
+.generate-btn {
+  min-height: 52px;
+  border-radius: var(--radius);
+  background: var(--gold);
+  color: var(--on-accent);
+  font-family: var(--font);
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -.01em;
+  text-transform: none;
+  transition: transform 100ms ease-out, background .2s ease, opacity .2s ease;
+}
+.generate-btn:hover { background: var(--gold-light); }
+.generate-btn:active { transform: scale(.97); }
+.generate-btn:disabled {
+  background: var(--fill);
+  color: var(--gray-700);
+}
+.btn-spinner {
+  border-color: rgba(255, 255, 255, .35);
+  border-top-color: #FFFFFF;
+}
+
+/* Chips */
+.chip,
+.tag-item,
+.fabric-tag,
+.kpi-tag,
+.risk-tag,
+.week-badge,
+.my-badge { border-radius: 999px; }
+
+/* Secondary buttons (copy, add, etc.) */
+.action-btn,
+.copy-btn,
+.add-comp-btn {
+  min-height: 36px;
+  padding: .45rem 1rem;
+  border: none;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--gold) 12%, transparent);
+  color: var(--gold);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  transition: transform 100ms ease-out;
+}
+.action-btn:hover,
+.copy-btn:hover,
+.add-comp-btn:hover { color: var(--gold); border-color: transparent; }
+.action-btn:active,
+.copy-btn:active,
+.add-comp-btn:active { transform: scale(.95); }
+
+/* ── Report pieces ────────────────────────────────────── */
+.section-header { border-bottom-color: var(--separator); }
+.section-title { font-size: 16px; font-weight: 600; letter-spacing: -.01em; }
+.section-badge {
+  border: none;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--gold) 12%, transparent);
+}
+.section-body p,
+.bullet-list li { line-height: 1.7; }
+.bullet-list li::before { content: '•'; font-size: 14px; }
+.insight-block {
+  border-left: none;
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--gold) 8%, transparent);
+}
+.insight-block p { font-style: normal; }
+.banner-title {
+  font-family: var(--font);
+  font-weight: 700;
+  letter-spacing: -.02em;
+}
+.status-badge,
+.timeline-tag { border-radius: 999px; }
+.timeline-item::before { border-color: var(--surface); }
+.error-msg { border-radius: var(--radius-sm); }
+
+/* ── Footer ───────────────────────────────────────────── */
+footer { border-top-color: var(--separator); }
+.footer-left { letter-spacing: 0; color: var(--gray-500); }
+.footer-right { color: var(--gray-500); }
+
+/* ── Accessibility preferences ────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  nav {
+    background: var(--black);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+@media (prefers-contrast: more) {
+  :root               { --separator: rgba(0, 0, 0, .5);       --gray-500: #3A3A3C; --gray-700: #48484A; }
+  [data-theme="dark"] { --separator: rgba(255, 255, 255, .5); --gray-500: #D1D1D6; --gray-700: #C7C7CC; }
+  .form-panel, .section-card, .empty-state, .streaming-state { box-shadow: 0 0 0 1px var(--separator); }
+}
+
+@media (max-width: 900px) {
+  .form-panel { padding: 1.5rem; border-radius: 16px; }
+
+  /* Keep wayfinding on phones: the page links become a scrollable tab row */
+  .nav-logo,
+  .nav-badge { display: none; }
+  .nav-links {
+    display: flex;
+    gap: 1.25rem;
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+    scrollbar-width: none;
+  }
+  .nav-links::-webkit-scrollbar { display: none; }
+  .nav-links a { font-size: 14px; padding: 12px 0; }
+}
+
+/* Inline input inside the tag field: no second field chrome */
+.tag-input-wrap .tag-input-inner,
+.tag-input-wrap .tag-input-inner:focus {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  min-height: 0;
+}

@@ -2,10 +2,11 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Season MD Planner — AI 시즌 MD 플랜 생성기</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=DM+Serif+Display:ital@0;1&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#F5F5F7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<script>(function(){var t=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t)})();</script>
 <style>
   :root {
     --black: #0a0a0a;
@@ -27,8 +28,8 @@
   body {
     background: var(--black);
     color: var(--white);
-    font-family: 'Noto Sans KR', sans-serif;
-    font-weight: 300;
+    font-family: var(--font);
+    font-weight:400;
     min-height: 100vh;
     overflow-x: hidden;
   }
@@ -43,17 +44,17 @@
     justify-content: space-between;
     padding: 0 3rem;
     height: 64px;
-    background: rgba(10,10,10,0.92);
+    background: color-mix(in srgb, var(--black) 92%, transparent);
     backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(201,168,76,0.2);
+    border-bottom: 1px solid var(--separator);
   }
 
-  .nav-logo { font-family: 'Space Mono', monospace; font-size: 13px; letter-spacing: 0.2em; color: var(--gold); text-transform: uppercase; }
+  .nav-logo { font-family: var(--font-mono); font-size: 13px; letter-spacing:0.02em; color: var(--gold); text-transform: uppercase; }
   .nav-links { display: flex; gap: 2rem; align-items: center; }
-  .nav-links a { font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.15em; color: var(--gray-500); text-decoration: none; text-transform: uppercase; transition: color 0.2s; }
+  .nav-links a { font-family: var(--font-mono); font-size:12px; letter-spacing:0.02em; color: var(--gray-500); text-decoration: none; text-transform: uppercase; transition: color 0.2s; }
   .nav-links a:hover { color: var(--gold); }
   .nav-links a.active { color: var(--gold); }
-  .nav-badge { font-size: 11px; color: var(--gray-500); letter-spacing: 0.1em; font-family: 'Space Mono', monospace; }
+  .nav-badge { font-size:12px; color: var(--gray-500); letter-spacing:0.02em; font-family: var(--font-mono); }
 
   /* ── HERO ── */
   .hero {
@@ -67,9 +68,9 @@
   }
 
   .hero-eyebrow {
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.3em;
+    font-family: var(--font-mono);
+    font-size:12px;
+    letter-spacing:0.02em;
     color: var(--gold);
     text-transform: uppercase;
     margin-bottom: 1.5rem;
@@ -87,7 +88,7 @@
   }
 
   .hero h1 {
-    font-family: 'DM Serif Display', serif;
+    font-family: var(--font-display);
     font-size: clamp(2.8rem, 5vw, 4.5rem);
     font-weight: 400;
     line-height: 1.1;
@@ -104,7 +105,7 @@
     font-size: 15px;
     line-height: 1.8;
     color: var(--gray-300);
-    font-weight: 300;
+    font-weight:400;
   }
 
   .hero-stats {
@@ -119,16 +120,16 @@
   }
 
   .stat-num {
-    font-family: 'Space Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 1.8rem;
     color: var(--gold);
     font-weight: 700;
   }
 
   .stat-label {
-    font-size: 11px;
+    font-size:12px;
     color: var(--gray-500);
-    letter-spacing: 0.1em;
+    letter-spacing:0.02em;
     margin-top: 2px;
   }
 
@@ -144,9 +145,9 @@
 
   /* ── FORM PANEL ── */
   .form-panel {
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(201,168,76,0.2);
-    border-radius: 2px;
+    background: var(--surface);
+    border: 1px solid var(--separator);
+    border-radius:var(--radius-sm);
     padding: 2.5rem;
     position: sticky;
     top: 84px;
@@ -154,14 +155,14 @@
   }
 
   .panel-title {
-    font-family: 'Space Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.3em;
+    font-family: var(--font-mono);
+    font-size:12px;
+    letter-spacing:0.02em;
     color: var(--gold);
     text-transform: uppercase;
     margin-bottom: 2rem;
     padding-bottom: 1rem;
-    border-bottom: 1px solid rgba(201,168,76,0.15);
+    border-bottom: 1px solid var(--separator);
   }
 
   .form-group {
@@ -170,8 +171,8 @@
 
   label {
     display: block;
-    font-size: 11px;
-    letter-spacing: 0.15em;
+    font-size:12px;
+    letter-spacing:0.02em;
     color: var(--gray-300);
     text-transform: uppercase;
     margin-bottom: 0.6rem;
@@ -191,13 +192,13 @@
 
   select, input[type="text"], input[type="number"], textarea {
     width: 100%;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(201,168,76,0.2);
-    border-radius: 1px;
+    background: var(--fill);
+    border: 1px solid var(--separator);
+    border-radius:var(--radius-sm);
     color: var(--white);
-    font-family: 'Noto Sans KR', sans-serif;
+    font-family: var(--font);
     font-size: 14px;
-    font-weight: 300;
+    font-weight:400;
     padding: 0.75rem 1rem;
     outline: none;
     transition: border-color 0.2s, background 0.2s;
@@ -206,20 +207,20 @@
 
   select {
     cursor: pointer;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M0 0l6 8 6-8' fill='none' stroke='%23c9a84c' stroke-width='1.5'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M0 0l6 8 6-8' fill='none' stroke='%2386868B' stroke-width='1.5'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 1rem center;
     padding-right: 2.5rem;
   }
 
   select option {
-    background: #1a1a1a;
+    background: var(--surface);
     color: var(--white);
   }
 
   select:focus, input:focus, textarea:focus {
     border-color: var(--gold);
-    background: rgba(201,168,76,0.05);
+    background: color-mix(in srgb, var(--gold) 5%, transparent);
   }
 
   textarea {
@@ -254,8 +255,8 @@
 
   .chip {
     padding: 0.35rem 0.8rem;
-    border: 1px solid rgba(201,168,76,0.25);
-    border-radius: 1px;
+    border: 1px solid var(--separator);
+    border-radius:var(--radius-sm);
     font-size: 12px;
     color: var(--gray-300);
     transition: all 0.15s;
@@ -264,7 +265,7 @@
   }
 
   .chip-label input:checked + .chip {
-    background: rgba(201,168,76,0.15);
+    background: color-mix(in srgb, var(--gold) 15%, transparent);
     border-color: var(--gold);
     color: var(--gold);
   }
@@ -276,12 +277,12 @@
     padding: 1rem;
     background: var(--gold);
     border: none;
-    border-radius: 1px;
+    border-radius:var(--radius-sm);
     color: var(--black);
-    font-family: 'Space Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 12px;
     font-weight: 700;
-    letter-spacing: 0.2em;
+    letter-spacing:0.02em;
     text-transform: uppercase;
     cursor: pointer;
     transition: background 0.2s, transform 0.1s;
@@ -322,32 +323,32 @@
     justify-content: space-between;
     margin-bottom: 1.5rem;
     padding-bottom: 1rem;
-    border-bottom: 1px solid rgba(201,168,76,0.15);
+    border-bottom: 1px solid var(--separator);
   }
 
   .output-title {
-    font-family: 'Space Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.3em;
+    font-family: var(--font-mono);
+    font-size:12px;
+    letter-spacing:0.02em;
     color: var(--gold);
     text-transform: uppercase;
   }
 
   .copy-btn {
-    font-family: 'Space Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.15em;
+    font-family: var(--font-mono);
+    font-size:12px;
+    letter-spacing:0.02em;
     color: var(--gray-500);
     background: none;
-    border: 1px solid rgba(255,255,255,0.1);
+    border: 1px solid var(--separator);
     padding: 0.4rem 0.8rem;
     cursor: pointer;
     text-transform: uppercase;
     transition: all 0.2s;
-    border-radius: 1px;
+    border-radius:var(--radius-sm);
   }
 
-  .copy-btn:hover { color: var(--gold); border-color: rgba(201,168,76,0.4); }
+  .copy-btn:hover { color: var(--gold); border-color: color-mix(in srgb, var(--gold) 40%, transparent); }
 
   /* 빈 상태 */
   .empty-state {
@@ -357,8 +358,8 @@
     justify-content: center;
     min-height: 400px;
     gap: 1.5rem;
-    border: 1px dashed rgba(201,168,76,0.15);
-    border-radius: 2px;
+    border: 1px dashed var(--separator);
+    border-radius:var(--radius-sm);
     text-align: center;
     padding: 3rem;
   }
@@ -369,7 +370,7 @@
   }
 
   .empty-title {
-    font-family: 'DM Serif Display', serif;
+    font-family: var(--font-display);
     font-size: 1.5rem;
     color: var(--gray-500);
     font-weight: 400;
@@ -387,16 +388,16 @@
     display: none;
     flex-direction: column;
     gap: 1rem;
-    border: 1px solid rgba(201,168,76,0.2);
-    border-radius: 2px;
+    border: 1px solid var(--separator);
+    border-radius:var(--radius-sm);
     padding: 2rem;
     min-height: 400px;
   }
 
   .streaming-label {
-    font-family: 'Space Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.25em;
+    font-family: var(--font-mono);
+    font-size:12px;
+    letter-spacing:0.02em;
     color: var(--gold);
     text-transform: uppercase;
     display: flex;
@@ -422,7 +423,7 @@
     line-height: 1.9;
     color: var(--gray-100);
     white-space: pre-wrap;
-    font-weight: 300;
+    font-weight:400;
   }
 
   /* ── MD PLAN 결과 카드 ── */
@@ -437,9 +438,9 @@
     align-items: center;
     gap: 1rem;
     padding: 1rem 1.5rem;
-    background: rgba(201,168,76,0.07);
-    border: 1px solid rgba(201,168,76,0.2);
-    border-radius: 2px;
+    background: color-mix(in srgb, var(--gold) 7%, transparent);
+    border: 1px solid var(--separator);
+    border-radius:var(--radius-sm);
   }
 
   .plan-meta-item {
@@ -456,35 +457,35 @@
   .plan-meta-divider {
     width: 1px;
     height: 14px;
-    background: rgba(255,255,255,0.15);
+    background: color-mix(in srgb, var(--white) 15%, transparent);
   }
 
   /* 섹션 카드 */
   .section-card {
-    background: rgba(255,255,255,0.02);
-    border: 1px solid rgba(255,255,255,0.07);
-    border-radius: 2px;
+    background: var(--surface);
+    border: 1px solid var(--separator);
+    border-radius:var(--radius-sm);
     overflow: hidden;
     transition: border-color 0.2s;
   }
 
-  .section-card:hover { border-color: rgba(201,168,76,0.25); }
+  .section-card:hover { border-color: var(--separator); }
 
   .section-header {
     display: flex;
     align-items: center;
     gap: 1rem;
     padding: 1.2rem 1.5rem;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
+    border-bottom: 1px solid var(--separator);
     cursor: pointer;
     user-select: none;
   }
 
   .section-num {
-    font-family: 'Space Mono', monospace;
-    font-size: 10px;
+    font-family: var(--font-mono);
+    font-size:12px;
     color: var(--gold);
-    letter-spacing: 0.15em;
+    letter-spacing:0.02em;
     min-width: 28px;
   }
 
@@ -514,7 +515,7 @@
     line-height: 1.9;
     color: var(--gray-100);
     margin-bottom: 1rem;
-    font-weight: 300;
+    font-weight:400;
   }
 
   .section-body p:last-child { margin-bottom: 0; }
@@ -528,19 +529,19 @@
   }
 
   .week-table th {
-    font-family: 'Space Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.2em;
+    font-family: var(--font-mono);
+    font-size:12px;
+    letter-spacing:0.02em;
     text-transform: uppercase;
     color: var(--gray-500);
     padding: 0.6rem 0.8rem;
     text-align: left;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
+    border-bottom: 1px solid var(--separator);
   }
 
   .week-table td {
     padding: 0.8rem;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
+    border-bottom: 1px solid var(--separator);
     color: var(--gray-100);
     vertical-align: top;
     line-height: 1.6;
@@ -548,16 +549,16 @@
 
   .week-table tr:last-child td { border-bottom: none; }
 
-  .week-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .week-table tr:hover td { background: var(--surface); }
 
   .week-badge {
     display: inline-block;
-    font-family: 'Space Mono', monospace;
-    font-size: 9px;
+    font-family: var(--font-mono);
+    font-size:12px;
     padding: 0.2rem 0.5rem;
-    border: 1px solid rgba(201,168,76,0.3);
+    border: 1px solid var(--separator);
     color: var(--gold);
-    border-radius: 1px;
+    border-radius:var(--radius-sm);
     white-space: nowrap;
   }
 
@@ -572,20 +573,20 @@
   .kpi-tag {
     font-size: 12px;
     padding: 0.3rem 0.75rem;
-    background: rgba(44,74,62,0.3);
-    border: 1px solid rgba(61,107,92,0.4);
-    color: #7dc4a8;
-    border-radius: 1px;
+    background: color-mix(in srgb, var(--green) 30%, transparent);
+    border: 1px solid color-mix(in srgb, var(--green) 40%, transparent);
+    color: var(--green);
+    border-radius:var(--radius-sm);
   }
 
   /* 리스크 태그 */
   .risk-tag {
     font-size: 12px;
     padding: 0.3rem 0.75rem;
-    background: rgba(90,50,30,0.3);
-    border: 1px solid rgba(180,100,60,0.3);
-    color: #e8a87a;
-    border-radius: 1px;
+    background: color-mix(in srgb, var(--amber) 30%, transparent);
+    border: 1px solid color-mix(in srgb, var(--amber) 30%, transparent);
+    color: var(--amber);
+    border-radius:var(--radius-sm);
   }
 
   /* 불릿 리스트 */
@@ -601,7 +602,7 @@
     padding-left: 1.2rem;
     position: relative;
     line-height: 1.7;
-    font-weight: 300;
+    font-weight:400;
   }
 
   .bullet-list li::before {
@@ -609,12 +610,12 @@
     position: absolute;
     left: 0;
     color: var(--gold);
-    font-size: 11px;
+    font-size:12px;
   }
 
   /* ── FOOTER ── */
   footer {
-    border-top: 1px solid rgba(255,255,255,0.06);
+    border-top: 1px solid var(--separator);
     padding: 2rem 3rem;
     display: flex;
     align-items: center;
@@ -624,10 +625,10 @@
   }
 
   .footer-left {
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
+    font-family: var(--font-mono);
+    font-size:12px;
     color: var(--gray-700);
-    letter-spacing: 0.1em;
+    letter-spacing:0.02em;
   }
 
   .footer-right {
@@ -644,11 +645,11 @@
   .error-msg {
     display: none;
     padding: 1rem 1.5rem;
-    background: rgba(200,60,60,0.1);
-    border: 1px solid rgba(200,60,60,0.3);
-    border-radius: 2px;
+    background: color-mix(in srgb, var(--red) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--red) 30%, transparent);
+    border-radius:var(--radius-sm);
     font-size: 13px;
-    color: #e88;
+    color: var(--red);
     line-height: 1.6;
   }
 
@@ -662,6 +663,7 @@
     footer { padding: 1.5rem; flex-direction: column; gap: 0.5rem; }
   }
 </style>
+<link rel="stylesheet" href="css/tools.css">
 </head>
 <body>
 
@@ -774,7 +776,7 @@
     </div>
 
     <div class="form-group">
-      <label>판매 채널 <span style="color:var(--gray-500);font-size:10px">(복수 선택)</span></label>
+      <label>판매 채널 <span style="color:var(--gray-500);font-size:12px">(복수 선택)</span></label>
       <div class="checkbox-group">
         <label class="chip-label"><input type="checkbox" value="백화점" checked><span class="chip">백화점</span></label>
         <label class="chip-label"><input type="checkbox" value="자사몰"><span class="chip">자사몰</span></label>
