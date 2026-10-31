@@ -1,0 +1,10 @@
+# API Keys — never upload
+*.txt
+.env
+.env.*
+
+# Local tooling
+.claude/
+.playwright-mcp/
+CLAUDE.md
+.DS_Store

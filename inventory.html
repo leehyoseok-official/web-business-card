@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inventory Analyzer — 재고 회전 진단기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=DM+Serif+Display:ital@0;1&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black:#0a0a0a; --white:#f8f6f1; --gold:#c9a84c; --gold-light:#e8d5a0;
+    --gray-100:#e8e5de; --gray-300:#bbb8b0; --gray-500:#7a7770; --gray-700:#3a3830;
+    --green:#4a9e6a; --green-dim:rgba(74,158,106,0.15);
+    --red:#c95c4c; --red-dim:rgba(201,92,76,0.12);
+    --amber:#c9924c; --amber-dim:rgba(201,146,76,0.12);
+    --blue:#4a7ec9; --blue-dim:rgba(74,126,201,0.12);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--black);color:var(--white);font-family:'Noto Sans KR',sans-serif;font-weight:300;min-height:100vh;overflow-x:hidden;}
+
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 3rem;height:64px;background:rgba(10,10,10,0.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(201,168,76,0.2);}
+  .nav-logo{font-family:'Space Mono',monospace;font-size:13px;letter-spacing:0.2em;color:var(--gold);text-transform:uppercase;}
+  .nav-links{display:flex;gap:2rem;}
+  .nav-links a{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.15em;color:var(--gray-500);text-decoration:none;text-transform:uppercase;transition:color 0.2s;}
+  .nav-links a:hover,.nav-links a.active{color:var(--gold);}
+  .nav-badge{font-size:11px;color:var(--gray-500);letter-spacing:0.1em;font-family:'Space Mono',monospace;}
+
+  .hero{padding:140px 3rem 60px;max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:end;}
+  .hero-eyebrow{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:0.3em;color:var(--gold);text-transform:uppercase;margin-bottom:1.5rem;display:flex;align-items:center;gap:0.75rem;}
+  .hero-eyebrow::before{content:'';display:block;width:32px;height:1px;background:var(--gold);}
+  .hero h1{font-family:'DM Serif Display',serif;font-size:clamp(2.8rem,5vw,4.2rem);font-weight:400;line-height:1.1;letter-spacing:-0.02em;}
+  .hero h1 em{font-style:italic;color:var(--gold);}
+  .hero-desc{font-size:15px;line-height:1.8;color:var(--gray-300);font-weight:300;}
+  .hero-stats{display:flex;gap:2rem;margin-top:2rem;}
+  .stat{border-left:2px solid var(--gold);padding-left:1rem;}
+  .stat-num{font-family:'Space Mono',monospace;font-size:1.8rem;color:var(--gold);font-weight:700;}
+  .stat-label{font-size:11px;color:var(--gray-500);letter-spacing:0.1em;margin-top:2px;}
+
+  .main{max-width:1100px;margin:0 auto;padding:0 3rem 6rem;display:grid;grid-template-columns:420px 1fr;gap:2rem;}
+
+  .form-panel{background:rgba(255,255,255,0.03);border:1px solid rgba(201,168,76,0.2);border-radius:2px;padding:2.5rem;position:sticky;top:84px;height:fit-content;}
+  .panel-title{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.3em;color:var(--gold);text-transform:uppercase;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid rgba(201,168,76,0.15);}
+  .form-group{margin-bottom:1.5rem;}
+  label{display:block;font-size:11px;letter-spacing:0.15em;color:var(--gray-300);text-transform:uppercase;margin-bottom:0.6rem;font-weight:400;}
+  .required-dot{display:inline-block;width:4px;height:4px;background:var(--gold);border-radius:50%;margin-left:4px;vertical-align:middle;margin-bottom:2px;}
+  select,input[type="text"],input[type="number"],textarea{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(201,168,76,0.2);border-radius:1px;color:var(--white);font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:300;padding:0.75rem 1rem;outline:none;transition:border-color 0.2s,background 0.2s;-webkit-appearance:none;}
+  select{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M0 0l6 8 6-8' fill='none' stroke='%23c9a84c' stroke-width='1.5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 1rem center;padding-right:2.5rem;}
+  select option{background:#1a1a1a;color:var(--white);}
+  select:focus,input:focus,textarea:focus{border-color:var(--gold);background:rgba(201,168,76,0.05);}
+  textarea{resize:vertical;min-height:80px;line-height:1.6;}
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+  .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.75rem;}
+
+  /* 카테고리별 재고 입력 */
+  .inv-table-wrap{overflow-x:auto;}
+  .inv-table{width:100%;border-collapse:collapse;font-size:13px;}
+  .inv-table th{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--gray-500);padding:0.5rem 0.6rem;text-align:left;border-bottom:1px solid rgba(255,255,255,0.06);}
+  .inv-table td{padding:0.4rem 0.4rem;}
+  .inv-table td input{padding:0.5rem 0.6rem;font-size:13px;}
+  .inv-table td:first-child{color:var(--gray-300);font-size:12px;padding:0.4rem 0.6rem;vertical-align:middle;white-space:nowrap;}
+
+  /* 게이지 진단 */
+  .gauge-row{display:flex;align-items:center;gap:0.75rem;margin-bottom:0.6rem;}
+  .gauge-label{font-size:12px;color:var(--gray-300);min-width:100px;}
+  .gauge-bg{flex:1;height:6px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;}
+  .gauge-fill{height:100%;border-radius:3px;transition:width 1s ease;}
+  .gauge-fill.green{background:var(--green);}
+  .gauge-fill.amber{background:var(--amber);}
+  .gauge-fill.red{background:var(--red);}
+  .gauge-val{font-family:'Space Mono',monospace;font-size:11px;min-width:36px;text-align:right;}
+
+  /* 상태 배지 */
+  .status-badge{display:inline-block;font-family:'Space Mono',monospace;font-size:9px;padding:0.2rem 0.6rem;border-radius:1px;letter-spacing:0.1em;text-transform:uppercase;}
+  .status-danger{background:var(--red-dim);border:1px solid rgba(201,92,76,0.4);color:#e88;}
+  .status-warning{background:var(--amber-dim);border:1px solid rgba(201,146,76,0.4);color:#e8b87a;}
+  .status-ok{background:var(--green-dim);border:1px solid rgba(74,158,106,0.4);color:#7dc4a8;}
+  .status-info{background:var(--blue-dim);border:1px solid rgba(74,126,201,0.4);color:#7aa8e8;}
+
+  /* 위험도 카드 */
+  .risk-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem;margin-bottom:0.5rem;}
+  .risk-card{padding:1rem;border-radius:2px;text-align:center;border:1px solid;}
+  .risk-card.high{background:var(--red-dim);border-color:rgba(201,92,76,0.3);}
+  .risk-card.mid{background:var(--amber-dim);border-color:rgba(201,146,76,0.3);}
+  .risk-card.low{background:var(--green-dim);border-color:rgba(74,158,106,0.3);}
+  .risk-card-label{font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-500);margin-bottom:0.4rem;font-family:'Space Mono',monospace;}
+  .risk-card-val{font-family:'Space Mono',monospace;font-size:1.4rem;font-weight:700;}
+  .risk-card.high .risk-card-val{color:#e88;}
+  .risk-card.mid .risk-card-val{color:#e8b87a;}
+  .risk-card.low .risk-card-val{color:#7dc4a8;}
+
+  /* 타임라인 */
+  .timeline{position:relative;padding-left:2rem;margin-top:0.75rem;}
+  .timeline::before{content:'';position:absolute;left:0.4rem;top:0;bottom:0;width:1px;background:rgba(201,168,76,0.2);}
+  .timeline-item{position:relative;margin-bottom:1.2rem;}
+  .timeline-item::before{content:'';position:absolute;left:-1.65rem;top:0.35rem;width:8px;height:8px;border-radius:50%;background:var(--gold);border:2px solid var(--black);}
+  .timeline-date{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.15em;color:var(--gold);text-transform:uppercase;margin-bottom:0.25rem;}
+  .timeline-action{font-size:13px;color:var(--gray-100);line-height:1.6;font-weight:300;}
+  .timeline-tag{display:inline-block;font-size:10px;padding:0.15rem 0.5rem;margin-top:0.3rem;border-radius:1px;}
+
+  /* 섹션 카드 */
+  .section-card{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:2px;overflow:hidden;transition:border-color 0.2s;}
+  .section-card:hover{border-color:rgba(201,168,76,0.25);}
+  .section-header{display:flex;align-items:center;gap:1rem;padding:1.2rem 1.5rem;border-bottom:1px solid rgba(255,255,255,0.06);cursor:pointer;user-select:none;}
+  .section-num{font-family:'Space Mono',monospace;font-size:10px;color:var(--gold);letter-spacing:0.15em;min-width:28px;}
+  .section-title{font-size:14px;font-weight:500;color:var(--white);flex:1;letter-spacing:0.02em;}
+  .section-badge{font-family:'Space Mono',monospace;font-size:9px;padding:0.2rem 0.6rem;border:1px solid rgba(201,168,76,0.3);color:var(--gold);border-radius:1px;}
+  .section-toggle{font-size:12px;color:var(--gray-500);}
+  .section-body{padding:1.5rem;display:none;}
+  .section-body.open{display:block;}
+  .section-body p{font-size:14px;line-height:1.9;color:var(--gray-100);margin-bottom:1rem;font-weight:300;}
+  .section-body p:last-child{margin-bottom:0;}
+  .bullet-list{list-style:none;}
+  .bullet-list li{font-size:14px;color:var(--gray-100);padding:0.4rem 0 0.4rem 1.2rem;position:relative;line-height:1.7;font-weight:300;}
+  .bullet-list li::before{content:'—';position:absolute;left:0;color:var(--gold);font-size:11px;}
+  .insight-block{padding:1.2rem 1.5rem;margin:0.75rem 0;border-left:3px solid var(--gold);background:rgba(201,168,76,0.05);border-radius:0 2px 2px 0;}
+  .insight-block p{font-size:14px;line-height:1.8;color:var(--gray-100);margin:0;font-style:italic;font-weight:300;}
+
+  /* 메트릭 카드 */
+  .metric-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:0.75rem;margin-top:0.5rem;}
+  .metric-card{padding:1rem;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:2px;}
+  .metric-label{font-size:10px;color:var(--gray-500);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.4rem;}
+  .metric-value{font-family:'Space Mono',monospace;font-size:1.2rem;font-weight:700;color:var(--gold);}
+  .metric-sub{font-size:11px;color:var(--gray-500);margin-top:0.3rem;line-height:1.4;}
+
+  /* KPI 행 */
+  .kpi-row{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+  .kpi-row:last-child{border-bottom:none;}
+  .kpi-name{font-size:13px;color:var(--gray-300);}
+  .kpi-val{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;}
+  .kpi-val.good{color:var(--green);}
+  .kpi-val.warn{color:var(--amber);}
+  .kpi-val.bad{color:var(--red);}
+
+  .generate-btn{width:100%;margin-top:2rem;padding:1rem;background:var(--gold);border:none;border-radius:1px;color:var(--black);font-family:'Space Mono',monospace;font-size:12px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;cursor:pointer;transition:background 0.2s,transform 0.1s;display:flex;align-items:center;justify-content:center;gap:0.75rem;}
+  .generate-btn:hover{background:var(--gold-light);}
+  .generate-btn:active{transform:scale(0.99);}
+  .generate-btn:disabled{background:var(--gray-700);color:var(--gray-500);cursor:not-allowed;}
+  .btn-spinner{display:none;width:14px;height:14px;border:2px solid rgba(0,0,0,0.3);border-top-color:var(--black);border-radius:50%;animation:spin 0.8s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  .output-panel{min-height:400px;}
+  .output-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid rgba(201,168,76,0.15);}
+  .output-title{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.3em;color:var(--gold);text-transform:uppercase;}
+  .action-btn{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.15em;color:var(--gray-500);background:none;border:1px solid rgba(255,255,255,0.1);padding:0.4rem 0.8rem;cursor:pointer;text-transform:uppercase;transition:all 0.2s;border-radius:1px;}
+  .action-btn:hover{color:var(--gold);border-color:rgba(201,168,76,0.4);}
+
+  .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:480px;gap:1.5rem;border:1px dashed rgba(201,168,76,0.15);border-radius:2px;text-align:center;padding:3rem;}
+  .empty-icon{font-size:3rem;opacity:0.25;}
+  .empty-title{font-family:'DM Serif Display',serif;font-size:1.5rem;color:var(--gray-500);font-weight:400;}
+  .empty-sub{font-size:13px;color:var(--gray-700);line-height:1.7;max-width:300px;}
+
+  .streaming-state{display:none;flex-direction:column;gap:1rem;border:1px solid rgba(201,168,76,0.2);border-radius:2px;padding:2rem;min-height:400px;}
+  .streaming-label{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.25em;color:var(--gold);text-transform:uppercase;display:flex;align-items:center;gap:0.5rem;}
+  .pulse-dot{width:6px;height:6px;background:var(--gold);border-radius:50%;animation:pulse 1s ease-in-out infinite;}
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.8)}}
+  #stream-output{font-size:14px;line-height:1.9;color:var(--gray-100);white-space:pre-wrap;font-weight:300;}
+
+  .diag-result{display:none;flex-direction:column;gap:1.5rem;}
+
+  /* 배너 */
+  .diag-banner{padding:2rem 2.5rem;background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.25);border-radius:2px;display:flex;justify-content:space-between;align-items:flex-start;gap:2rem;}
+  .banner-season{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.3em;color:var(--gold);text-transform:uppercase;margin-bottom:0.75rem;}
+  .banner-title{font-family:'DM Serif Display',serif;font-size:1.8rem;font-weight:400;color:var(--white);line-height:1.2;}
+  .banner-subtitle{font-size:13px;color:var(--gray-300);margin-top:0.5rem;font-weight:300;}
+  .banner-right{display:flex;flex-direction:column;gap:0.5rem;align-items:flex-end;}
+  .banner-meta{font-size:11px;color:var(--gray-500);font-family:'Space Mono',monospace;letter-spacing:0.1em;}
+
+  .error-msg{display:none;padding:1rem 1.5rem;background:rgba(200,60,60,0.1);border:1px solid rgba(200,60,60,0.3);border-radius:2px;font-size:13px;color:#e88;line-height:1.6;margin-top:1rem;}
+
+  footer{border-top:1px solid rgba(255,255,255,0.06);padding:2rem 3rem;display:flex;align-items:center;justify-content:space-between;max-width:1100px;margin:0 auto;}
+  .footer-left{font-family:'Space Mono',monospace;font-size:11px;color:var(--gray-700);letter-spacing:0.1em;}
+  .footer-right{font-size:12px;color:var(--gray-700);}
+  .footer-right a{color:var(--gold);text-decoration:none;}
+
+  @media(max-width:900px){
+    nav{padding:0 1.5rem;} .nav-links{display:none;}
+    .hero{grid-template-columns:1fr;padding:120px 1.5rem 40px;gap:2rem;}
+    .main{grid-template-columns:1fr;padding:0 1.5rem 4rem;}
+    .form-panel{position:static;}
+    .risk-summary{grid-template-columns:1fr 1fr;}
+    footer{padding:1.5rem;flex-direction:column;gap:0.5rem;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">MD Dashboard</div>
+  <div class="nav-links">
+    <a href="index.html">HOME</a>
+    <a href="md-season-planner.html">MD 시즌 플랜</a>
+    <a href="trend-report.html">트렌드 리포트</a>
+    <a href="price-strategy.html">가격 전략</a>
+    <a href="inventory.html" class="active">재고 진단</a>
+  </div>
+  <div class="nav-badge">Powered by Claude AI · Lee Hyoseok MD</div>
+</nav>
+
+<section class="hero">
+  <div>
+    <div class="hero-eyebrow">Inventory Diagnosis</div>
+    <h1>재고 회전<br><em>진단기</em></h1>
+  </div>
+  <div>
+    <p class="hero-desc">
+      판매율·재고량·경과 주차를 입력하면<br>
+      회전율 진단, 리스크 등급, 마크다운 타이밍,<br>
+      카테고리별 소화 전략을 즉시 도출합니다.
+    </p>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-num">STR</div><div class="stat-label">판매율 분석</div></div>
+      <div class="stat"><div class="stat-num">MD%</div><div class="stat-label">마크다운 전략</div></div>
+      <div class="stat"><div class="stat-num">ROI</div><div class="stat-label">재고 수익화</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="main">
+  <div class="form-panel">
+    <div class="panel-title">재고 현황 입력</div>
+
+    <div class="form-group">
+      <label>브랜드 / 사업부<span class="required-dot"></span></label>
+      <input type="text" id="brand" placeholder="예: 브루노바피, 남성캐주얼 TF" />
+    </div>
+
+    <div class="grid-2">
+      <div class="form-group">
+        <label>시즌<span class="required-dot"></span></label>
+        <select id="season">
+          <option value="">선택</option>
+          <option value="25SS">25 S/S</option>
+          <option value="25FW">25 F/W</option>
+          <option value="26SS">26 S/S</option>
+          <option value="26FW">26 F/W</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>시즌 경과 주차<span class="required-dot"></span></label>
+        <select id="elapsedWeek">
+          <option value="">선택</option>
+          <option value="2주차 (초반)">2주차 (초반)</option>
+          <option value="4주차 (초반)">4주차 (초반)</option>
+          <option value="6주차 (중반)">6주차 (중반)</option>
+          <option value="8주차 (중반)">8주차 (중반)</option>
+          <option value="10주차 (후반)">10주차 (후반)</option>
+          <option value="12주차 (마감)">12주차 (마감)</option>
+          <option value="시즌 종료 후">시즌 종료 후</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>전체 시즌 판매율 (%)<span class="required-dot"></span></label>
+      <input type="number" id="overallStr" placeholder="예: 68" min="0" max="100" />
+    </div>
+
+    <div class="form-group">
+      <label>현재 재고 금액 (원가 기준, 백만원)</label>
+      <input type="number" id="invAmount" placeholder="예: 450 (4억 5천만원)" min="0" />
+    </div>
+
+    <div class="form-group">
+      <label>카테고리별 판매율 <span style="color:var(--gray-500);font-size:10px">(주요 카테고리)</span></label>
+      <div class="inv-table-wrap">
+        <table class="inv-table">
+          <thead><tr><th>카테고리</th><th>판매율%</th><th>재고수량</th></tr></thead>
+          <tbody id="cattbody">
+            <tr><td>수트/자켓</td><td><input type="number" class="cat-str" placeholder="72" min="0" max="100"/></td><td><input type="number" class="cat-qty" placeholder="수량"/></td></tr>
+            <tr><td>아우터</td><td><input type="number" class="cat-str" placeholder="55" min="0" max="100"/></td><td><input type="number" class="cat-qty" placeholder="수량"/></td></tr>
+            <tr><td>캐주얼 상의</td><td><input type="number" class="cat-str" placeholder="80" min="0" max="100"/></td><td><input type="number" class="cat-qty" placeholder="수량"/></td></tr>
+            <tr><td>팬츠</td><td><input type="number" class="cat-str" placeholder="65" min="0" max="100"/></td><td><input type="number" class="cat-qty" placeholder="수량"/></td></tr>
+            <tr><td>셔츠/니트</td><td><input type="number" class="cat-str" placeholder="75" min="0" max="100"/></td><td><input type="number" class="cat-qty" placeholder="수량"/></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>채널별 현황</label>
+      <select id="mainChannel">
+        <option value="백화점 중심">백화점 중심</option>
+        <option value="백화점+온라인 병행">백화점+온라인 병행</option>
+        <option value="온라인 중심">온라인 중심</option>
+        <option value="멀티채널">멀티채널</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>마크다운 이력 / 특이사항</label>
+      <textarea id="note" placeholder="예: 아우터 카테고리 20% 1차 MD 진행했으나 반응 없음. 연말 행사 미정. 아울렛 이관 가능."></textarea>
+    </div>
+
+    <button class="generate-btn" id="generateBtn" onclick="generateDiag()">
+      <span class="btn-spinner" id="btnSpinner"></span>
+      <span id="btnText">▶ 재고 회전 진단</span>
+    </button>
+    <div class="error-msg" id="errorMsg"></div>
+  </div>
+
+  <div class="output-panel">
+    <div class="output-header">
+      <div class="output-title">재고 회전 진단 리포트</div>
+      <button class="action-btn" id="copyBtn" onclick="copyResult()" style="display:none">복사</button>
+    </div>
+
+    <div class="empty-state" id="emptyState">
+      <div class="empty-icon">◈</div>
+      <div class="empty-title">진단을 시작해 주세요</div>
+      <div class="empty-sub">현재 판매율과 재고 현황을 입력하면<br>AI가 리스크를 진단하고 소화 전략을 제안합니다.</div>
+    </div>
+
+    <div class="streaming-state" id="streamingState">
+      <div class="streaming-label"><div class="pulse-dot"></div>재고 데이터 분석 중</div>
+      <div id="stream-output"></div>
+    </div>
+
+    <div class="diag-result" id="diagResult"></div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-left">MD DASHBOARD © 2026</div>
+  <div class="footer-right">Built by <a href="https://leehyoseok.vercel.app" target="_blank">Lee Hyoseok</a> · 18년 남성복 MD</div>
+</footer>
+
+<script>
+let fullText = '';
+
+function getCatData() {
+  const rows = document.querySelectorAll('#cattbody tr');
+  const result = [];
+  rows.forEach(row => {
+    const catName = row.querySelector('td:first-child').textContent.trim();
+    const str = row.querySelector('.cat-str').value;
+    const qty = row.querySelector('.cat-qty').value;
+    if (str || qty) result.push(`${catName}: 판매율 ${str||'?'}%, 재고 ${qty||'?'}개`);
+  });
+  return result.join(' / ') || '미입력';
+}
+
+function showError(msg) {
+  const el = document.getElementById('errorMsg');
+  el.textContent = msg; el.style.display = 'block';
+  setTimeout(() => el.style.display = 'none', 5000);
+}
+
+function setLoading(on) {
+  document.getElementById('generateBtn').disabled = on;
+  document.getElementById('btnSpinner').style.display = on ? 'block' : 'none';
+  document.getElementById('btnText').textContent = on ? '진단 중...' : '▶ 재고 회전 진단';
+}
+
+// 판매율 → 리스크 등급 자동 계산
+function calcRiskGrade(str, elapsed) {
+  const s = parseFloat(str);
+  if (isNaN(s)) return 'UNKNOWN';
+  const earlyThreshold = { danger: 30, warning: 50 };
+  const midThreshold = { danger: 45, warning: 65 };
+  const lateThreshold = { danger: 60, warning: 75 };
+  let t = midThreshold;
+  if (elapsed && elapsed.includes('초반')) t = earlyThreshold;
+  else if (elapsed && (elapsed.includes('후반') || elapsed.includes('마감') || elapsed.includes('종료'))) t = lateThreshold;
+  if (s < t.danger) return 'HIGH';
+  if (s < t.warning) return 'MID';
+  return 'LOW';
+}
+
+async function generateDiag() {
+  const brand = document.getElementById('brand').value.trim();
+  const season = document.getElementById('season').value;
+  const elapsed = document.getElementById('elapsedWeek').value;
+  const overallStr = document.getElementById('overallStr').value;
+
+  if (!brand || !season || !elapsed || !overallStr) {
+    showError('필수 항목(브랜드, 시즌, 경과 주차, 전체 판매율)을 입력해 주세요.'); return;
+  }
+
+  const invAmount = document.getElementById('invAmount').value;
+  const channel = document.getElementById('mainChannel').value;
+  const catData = getCatData();
+  const note = document.getElementById('note').value.trim();
+  const riskGrade = calcRiskGrade(overallStr, elapsed);
+
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('diagResult').style.display = 'none';
+  document.getElementById('copyBtn').style.display = 'none';
+  const streamState = document.getElementById('streamingState');
+  streamState.style.display = 'flex';
+  document.getElementById('stream-output').textContent = '';
+  fullText = ''; setLoading(true);
+
+  const prompt = `당신은 18년 경력의 남성복 MD 전문가입니다.
+아래 재고 현황을 분석하여 즉시 실행 가능한 재고 소화 전략 리포트를 작성해 주세요.
+
+[현황 데이터]
+- 브랜드/사업부: ${brand}
+- 시즌: ${season}
+- 시즌 경과: ${elapsed}
+- 전체 판매율(STR): ${overallStr}%
+- 현재 재고 금액: ${invAmount ? invAmount + '백만원' : '미입력'}
+- 주요 채널: ${channel}
+- 카테고리별 현황: ${catData}
+- 마크다운 이력/특이사항: ${note || '없음'}
+- AI 초기 리스크 진단: ${riskGrade} 등급
+
+아래 구조로 작성하세요. 각 섹션은 【섹션명】으로 구분, 구체적 수치와 실행 가능한 액션 중심으로 작성하세요.
+
+【1. 재고 현황 종합 진단】
+- 전체 STR ${overallStr}% 의 수준 평가 (우수/양호/주의/위험)
+- ${elapsed} 기준 정상 STR 범위와 비교
+- 카테고리별 위험도 분류 (우선순위 매기기)
+- 재고 금액 규모의 리스크 수준
+
+【2. 리스크 등급 및 손실 예측】
+- 전체 리스크 등급: ${riskGrade}
+- 카테고리별 리스크 등급 (HIGH/MID/LOW)
+- 시즌 마감 시 예상 잔재율 (%)
+- 예상 손실 금액 시나리오 (원가 기준)
+- 마크다운 없이 방치할 경우 시나리오
+
+【3. 마크다운 전략 및 타이밍】
+- 즉시 마크다운 필요 카테고리 및 권장 할인율
+- 단계별 마크다운 스케줄 (1차/2차/3차 시점 및 할인율)
+- 채널별 마크다운 실행 방안 (${channel})
+- 마크다운 ROI 계산 (할인율별 예상 회수율)
+
+【4. 채널별 소화 전략】
+- ${channel} 채널 활용 소화 방안
+- 아울렛 이관 조건 및 시점 제안
+- 온라인 플래시세일 활용 방안
+- 번들/묶음 판매 기획 아이디어
+
+【5. 주차별 실행 로드맵】
+아래 형식으로 남은 기간 주차별 액션 플랜:
+W__ | [시점] | [핵심 액션] | [목표 STR] | [우선 카테고리]
+(남은 기간 전체 작성)
+
+【6. 다음 시즌 예방 전략】
+- 이번 재고 이슈의 근본 원인 분석
+- 발주 구조 개선 제안 (수량/타이밍/구성)
+- 재고 관리 KPI 설정 제안
+- 시즌 초 조기경보 체크리스트 5가지`;
+
+  try {
+    const res = await fetch('/api/inventory', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'API 오류');
+    fullText = data.content;
+    streamState.style.display = 'none';
+    renderDiag(fullText, { brand, season, elapsed, overallStr, invAmount, channel });
+    document.getElementById('copyBtn').style.display = 'block';
+  } catch (e) {
+    streamState.style.display = 'none';
+    document.getElementById('emptyState').style.display = 'flex';
+    showError('오류: ' + e.message);
+  } finally { setLoading(false); }
+}
+
+function renderDiag(text, meta) {
+  const container = document.getElementById('diagResult');
+  container.innerHTML = '';
+
+  const str = parseFloat(meta.overallStr);
+  const riskGrade = calcRiskGrade(meta.overallStr, meta.elapsed);
+  const riskColor = riskGrade === 'HIGH' ? '#e88' : riskGrade === 'MID' ? '#e8b87a' : '#7dc4a8';
+  const riskClass = riskGrade === 'HIGH' ? 'high' : riskGrade === 'MID' ? 'mid' : 'low';
+
+  // 배너
+  const banner = document.createElement('div');
+  banner.className = 'diag-banner';
+  banner.innerHTML = `
+    <div class="banner-left">
+      <div class="banner-season">${meta.season} INVENTORY DIAGNOSIS</div>
+      <div class="banner-title">${meta.brand}<br>재고 회전 진단</div>
+      <div class="banner-subtitle">${meta.elapsed} · ${meta.channel}</div>
+    </div>
+    <div class="banner-right">
+      <div class="banner-meta" style="color:${riskColor};font-size:14px;font-weight:700;">RISK: ${riskGrade}</div>
+      <div class="banner-meta">전체 STR ${meta.overallStr}%</div>
+      <div class="banner-meta">생성일 ${new Date().toLocaleDateString('ko-KR')}</div>
+    </div>`;
+  container.appendChild(banner);
+
+  // 리스크 요약 카드
+  const remaining = Math.max(0, 100 - str).toFixed(0);
+  const riskSummary = document.createElement('div');
+  riskSummary.className = 'risk-summary';
+  riskSummary.innerHTML = `
+    <div class="risk-card ${riskClass}">
+      <div class="risk-card-label">현재 STR</div>
+      <div class="risk-card-val">${str.toFixed(0)}%</div>
+    </div>
+    <div class="risk-card ${riskGrade==='HIGH'?'high':riskGrade==='MID'?'mid':'low'}">
+      <div class="risk-card-label">잔재율</div>
+      <div class="risk-card-val">${remaining}%</div>
+    </div>
+    <div class="risk-card ${riskClass}">
+      <div class="risk-card-label">리스크</div>
+      <div class="risk-card-val">${riskGrade}</div>
+    </div>`;
+  container.appendChild(riskSummary);
+
+  // 게이지 바
+  const gaugeWrap = document.createElement('div');
+  gaugeWrap.style.cssText = 'background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:2px;padding:1.5rem;';
+  const strColor = str >= 75 ? 'green' : str >= 55 ? 'amber' : 'red';
+  gaugeWrap.innerHTML = `
+    <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.2em;color:var(--gold);text-transform:uppercase;margin-bottom:1rem;">STR 게이지</div>
+    <div class="gauge-row">
+      <span class="gauge-label">전체 판매율</span>
+      <div class="gauge-bg"><div class="gauge-fill ${strColor}" style="width:${str}%"></div></div>
+      <span class="gauge-val" style="color:var(--${strColor})">${str.toFixed(0)}%</span>
+    </div>
+    <div style="display:flex;gap:1.5rem;margin-top:0.5rem;">
+      <span style="font-size:11px;color:var(--green)">● 우수 75%+</span>
+      <span style="font-size:11px;color:var(--amber)">● 주의 55~75%</span>
+      <span style="font-size:11px;color:var(--red)">● 위험 ~55%</span>
+    </div>`;
+  container.appendChild(gaugeWrap);
+
+  // 섹션 파싱
+  const badges = ['DIAGNOSIS','RISK','MARKDOWN','CHANNEL','ROADMAP','PREVENTION'];
+  const sectionRegex = /【(\d+\.\s*[^】]+)】([\s\S]*?)(?=【\d+|$)/g;
+  let match, idx = 0;
+  while ((match = sectionRegex.exec(text)) !== null) {
+    const title = match[1].trim();
+    const body = match[2].trim();
+    const card = document.createElement('div');
+    card.className = 'section-card';
+    const header = document.createElement('div');
+    header.className = 'section-header';
+    header.innerHTML = `
+      <span class="section-num">${String(idx+1).padStart(2,'0')}</span>
+      <span class="section-title">${title}</span>
+      <span class="section-badge">${badges[idx]||'PART'}</span>
+      <span class="section-toggle">${idx<2?'▲':'▼'}</span>`;
+    const bodyEl = document.createElement('div');
+    bodyEl.className = 'section-body' + (idx < 2 ? ' open' : '');
+
+    if (title.includes('주차별') || title.includes('로드맵')) {
+      renderWeekRoadmap(bodyEl, body);
+    } else if (title.includes('마크다운')) {
+      renderMarkdownSection(bodyEl, body);
+    } else {
+      renderGeneric(bodyEl, body);
+    }
+
+    header.addEventListener('click', () => {
+      const open = bodyEl.classList.contains('open');
+      bodyEl.classList.toggle('open', !open);
+      header.querySelector('.section-toggle').textContent = open ? '▼' : '▲';
+    });
+    card.appendChild(header); card.appendChild(bodyEl);
+    container.appendChild(card); idx++;
+  }
+
+  if (idx === 0) {
+    const fb = document.createElement('div');
+    fb.style.cssText = 'padding:1.5rem;font-size:14px;line-height:1.9;color:var(--gray-100);white-space:pre-wrap;font-weight:300;';
+    fb.textContent = text; container.appendChild(fb);
+  }
+  container.style.display = 'flex';
+}
+
+function renderWeekRoadmap(el, body) {
+  const lines = body.split('\n').filter(l => l.trim());
+  const weekLines = lines.filter(l => /^W\d+/.test(l.trim()));
+  if (weekLines.length) {
+    const timeline = document.createElement('div'); timeline.className = 'timeline';
+    weekLines.forEach(line => {
+      const parts = line.split('|').map(s => s.trim());
+      const item = document.createElement('div'); item.className = 'timeline-item';
+      item.innerHTML = `
+        <div class="timeline-date">${parts[0]||''} ${parts[1]||''}</div>
+        <div class="timeline-action">${parts[2]||''}</div>
+        ${parts[3] ? `<span class="timeline-tag status-ok">목표 STR ${parts[3]}</span>` : ''}
+        ${parts[4] ? `<span class="timeline-tag status-info" style="margin-left:4px">${parts[4]}</span>` : ''}`;
+      timeline.appendChild(item);
+    });
+    el.appendChild(timeline);
+  }
+  const others = lines.filter(l => !/^W\d+/.test(l.trim())).join('\n');
+  renderBulletOrPara(el, others);
+}
+
+function renderMarkdownSection(el, body) {
+  const lines = body.split('\n').filter(l => l.trim());
+  const pctLines = [], others = [];
+  lines.forEach(line => {
+    const t = line.replace(/^[-•*]\s*/,'').trim();
+    if (t.match(/\d+\s*%/) && t.length < 80) pctLines.push(t);
+    else others.push(t);
+  });
+  if (pctLines.length) {
+    const grid = document.createElement('div'); grid.className = 'metric-grid';
+    pctLines.slice(0,4).forEach(t => {
+      const card = document.createElement('div'); card.className = 'metric-card';
+      const pct = t.match(/(\d+)\s*%/);
+      card.innerHTML = `<div class="metric-label">${t.replace(/\d+\s*%/g,'').replace(/[1-9차]/g,'').trim().substring(0,20)}</div><div class="metric-value">${pct?pct[0]:'-'}</div>`;
+      grid.appendChild(card);
+    });
+    el.appendChild(grid);
+  }
+  renderBulletOrPara(el, others.join('\n'));
+}
+
+function renderGeneric(el, body) {
+  const lines = body.split('\n');
+  const insights = [], normals = [];
+  lines.forEach(l => {
+    if (l.includes('핵심') || l.includes('★') || l.includes('즉시')) insights.push(l.replace(/^[-•*★]\s*/,'').trim());
+    else normals.push(l);
+  });
+  if (insights.length) {
+    const block = document.createElement('div'); block.className = 'insight-block';
+    block.innerHTML = insights.map(l => `<p>${l}</p>`).join(''); el.appendChild(block);
+  }
+  renderBulletOrPara(el, normals.join('\n'));
+}
+
+function renderBulletOrPara(el, text) {
+  const lines = text.split('\n').filter(l => l.trim());
+  if (!lines.length) return;
+  const hasBullets = lines.some(l => /^[-•*]/.test(l.trim()));
+  if (hasBullets) {
+    const ul = document.createElement('ul'); ul.className = 'bullet-list';
+    lines.forEach(line => {
+      const t = line.replace(/^[-•*]\s*/,'').trim(); if (!t) return;
+      const li = document.createElement('li'); li.textContent = t; ul.appendChild(li);
+    }); el.appendChild(ul);
+  } else {
+    const p = document.createElement('p');
+    p.style.cssText = 'font-size:14px;line-height:1.9;color:var(--gray-100);white-space:pre-wrap;font-weight:300;';
+    p.textContent = text; el.appendChild(p);
+  }
+}
+
+function copyResult() {
+  if (!fullText) return;
+  navigator.clipboard.writeText(fullText).then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = '복사됨 ✓'; setTimeout(() => btn.textContent = '복사', 2000);
+  });
+}
+</script>
+</body>
+</html>

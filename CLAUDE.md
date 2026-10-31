@@ -30,4 +30,8 @@ All user-specific data is concentrated in two places:
 - FOUC prevention: a tiny inline `<script>` in `<head>` reads `localStorage` and sets `data-theme` on `<html>` before CSS is parsed, eliminating a flash on reload.
 - The avatar falls back gracefully: if `profile.jpg` is missing the `onerror` handler hides the `<img>` and reveals `.avatar-initial` (CSS-drawn circle with an initial letter).
 - On `≤ 479px` the card goes full-bleed (no border-radius, no shadow) to use every pixel on small phones. On `≥ 480px` it renders as a centred floating card.
-- Link buttons are stacked (column) on mobile and switch to a 3-column row on `≥ 480px`.
+- Design follows Apple conventions: one accent colour (`--accent`) plus a neutral grey scale, system font stack, whitespace instead of section dividers, `:active` press feedback.
+- Actions sit under the profile: a full-width primary "연락처에 추가" (vCard) button, then Email / LinkedIn as tinted secondaries in a 2-column grid.
+- "My Pages" is an iOS-style inset grouped list (`.page-links`) with hairline separators and chevrons.
+- `css/chatbot.css` defines its own `--chat-*` tokens (light + dark) so the widget also works on `pages/portfolio.html`.
+- `.vercelignore` keeps `*.txt` (API key file) and local tooling out of CLI deployments.

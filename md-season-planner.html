@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Season MD Planner — AI 시즌 MD 플랜 생성기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=DM+Serif+Display:ital@0;1&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --white: #f8f6f1;
+    --cream: #f0ede4;
+    --gold: #c9a84c;
+    --gold-light: #e8d5a0;
+    --gold-dark: #8a6f2e;
+    --gray-100: #e8e5de;
+    --gray-300: #bbb8b0;
+    --gray-500: #7a7770;
+    --gray-700: #3a3830;
+    --accent: #2c4a3e;
+    --accent-light: #3d6b5c;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 3rem;
+    height: 64px;
+    background: rgba(10,10,10,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(201,168,76,0.2);
+  }
+
+  .nav-logo { font-family: 'Space Mono', monospace; font-size: 13px; letter-spacing: 0.2em; color: var(--gold); text-transform: uppercase; }
+  .nav-links { display: flex; gap: 2rem; align-items: center; }
+  .nav-links a { font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.15em; color: var(--gray-500); text-decoration: none; text-transform: uppercase; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--gold); }
+  .nav-links a.active { color: var(--gold); }
+  .nav-badge { font-size: 11px; color: var(--gray-500); letter-spacing: 0.1em; font-family: 'Space Mono', monospace; }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 140px 3rem 80px;
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: end;
+  }
+
+  .hero-eyebrow {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .hero-eyebrow::before {
+    content: '';
+    display: block;
+    width: 32px;
+    height: 1px;
+    background: var(--gold);
+  }
+
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2.8rem, 5vw, 4.5rem);
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--white);
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .hero-desc {
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--gray-300);
+    font-weight: 300;
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+
+  .stat {
+    border-left: 2px solid var(--gold);
+    padding-left: 1rem;
+  }
+
+  .stat-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 1.8rem;
+    color: var(--gold);
+    font-weight: 700;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--gray-500);
+    letter-spacing: 0.1em;
+    margin-top: 2px;
+  }
+
+  /* ── MAIN LAYOUT ── */
+  .main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 3rem 6rem;
+    display: grid;
+    grid-template-columns: 420px 1fr;
+    gap: 2rem;
+  }
+
+  /* ── FORM PANEL ── */
+  .form-panel {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 2px;
+    padding: 2.5rem;
+    position: sticky;
+    top: 84px;
+    height: fit-content;
+  }
+
+  .panel-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(201,168,76,0.15);
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  label {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--gray-300);
+    text-transform: uppercase;
+    margin-bottom: 0.6rem;
+    font-weight: 400;
+  }
+
+  .required-dot {
+    display: inline-block;
+    width: 4px;
+    height: 4px;
+    background: var(--gold);
+    border-radius: 50%;
+    margin-left: 4px;
+    vertical-align: middle;
+    margin-bottom: 2px;
+  }
+
+  select, input[type="text"], input[type="number"], textarea {
+    width: 100%;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 1px;
+    color: var(--white);
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 14px;
+    font-weight: 300;
+    padding: 0.75rem 1rem;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s;
+    -webkit-appearance: none;
+  }
+
+  select {
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M0 0l6 8 6-8' fill='none' stroke='%23c9a84c' stroke-width='1.5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    padding-right: 2.5rem;
+  }
+
+  select option {
+    background: #1a1a1a;
+    color: var(--white);
+  }
+
+  select:focus, input:focus, textarea:focus {
+    border-color: var(--gold);
+    background: rgba(201,168,76,0.05);
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 80px;
+    line-height: 1.6;
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  /* 채널 체크박스 그룹 */
+  .checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .chip-label {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    cursor: pointer;
+  }
+
+  .chip-label input[type="checkbox"] {
+    display: none;
+  }
+
+  .chip {
+    padding: 0.35rem 0.8rem;
+    border: 1px solid rgba(201,168,76,0.25);
+    border-radius: 1px;
+    font-size: 12px;
+    color: var(--gray-300);
+    transition: all 0.15s;
+    user-select: none;
+    white-space: nowrap;
+  }
+
+  .chip-label input:checked + .chip {
+    background: rgba(201,168,76,0.15);
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  /* 생성 버튼 */
+  .generate-btn {
+    width: 100%;
+    margin-top: 2rem;
+    padding: 1rem;
+    background: var(--gold);
+    border: none;
+    border-radius: 1px;
+    color: var(--black);
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+  }
+
+  .generate-btn:hover { background: var(--gold-light); }
+  .generate-btn:active { transform: scale(0.99); }
+  .generate-btn:disabled {
+    background: var(--gray-700);
+    color: var(--gray-500);
+    cursor: not-allowed;
+  }
+
+  .btn-spinner {
+    display: none;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(0,0,0,0.3);
+    border-top-color: var(--black);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── OUTPUT PANEL ── */
+  .output-panel {
+    min-height: 400px;
+  }
+
+  .output-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(201,168,76,0.15);
+  }
+
+  .output-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+
+  .copy-btn {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--gray-500);
+    background: none;
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 0.4rem 0.8rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.2s;
+    border-radius: 1px;
+  }
+
+  .copy-btn:hover { color: var(--gold); border-color: rgba(201,168,76,0.4); }
+
+  /* 빈 상태 */
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    gap: 1.5rem;
+    border: 1px dashed rgba(201,168,76,0.15);
+    border-radius: 2px;
+    text-align: center;
+    padding: 3rem;
+  }
+
+  .empty-icon {
+    font-size: 3rem;
+    opacity: 0.3;
+  }
+
+  .empty-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.5rem;
+    color: var(--gray-500);
+    font-weight: 400;
+  }
+
+  .empty-sub {
+    font-size: 13px;
+    color: var(--gray-700);
+    line-height: 1.7;
+    max-width: 300px;
+  }
+
+  /* 스트리밍 중 상태 */
+  .streaming-state {
+    display: none;
+    flex-direction: column;
+    gap: 1rem;
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 2px;
+    padding: 2rem;
+    min-height: 400px;
+  }
+
+  .streaming-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: var(--gold);
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .pulse-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--gold);
+    border-radius: 50%;
+    animation: pulse 1s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.8); }
+  }
+
+  #stream-output {
+    font-size: 14px;
+    line-height: 1.9;
+    color: var(--gray-100);
+    white-space: pre-wrap;
+    font-weight: 300;
+  }
+
+  /* ── MD PLAN 결과 카드 ── */
+  .plan-result {
+    display: none;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .plan-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    background: rgba(201,168,76,0.07);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 2px;
+  }
+
+  .plan-meta-item {
+    font-size: 12px;
+    color: var(--gray-300);
+  }
+
+  .plan-meta-item strong {
+    color: var(--gold);
+    font-weight: 500;
+    margin-right: 0.3rem;
+  }
+
+  .plan-meta-divider {
+    width: 1px;
+    height: 14px;
+    background: rgba(255,255,255,0.15);
+  }
+
+  /* 섹션 카드 */
+  .section-card {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 2px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .section-card:hover { border-color: rgba(201,168,76,0.25); }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.2rem 1.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .section-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--gold);
+    letter-spacing: 0.15em;
+    min-width: 28px;
+  }
+
+  .section-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--white);
+    flex: 1;
+    letter-spacing: 0.02em;
+  }
+
+  .section-toggle {
+    font-size: 12px;
+    color: var(--gray-500);
+    transition: transform 0.2s;
+  }
+
+  .section-body {
+    padding: 1.5rem;
+    display: none;
+  }
+
+  .section-body.open { display: block; }
+
+  .section-body p {
+    font-size: 14px;
+    line-height: 1.9;
+    color: var(--gray-100);
+    margin-bottom: 1rem;
+    font-weight: 300;
+  }
+
+  .section-body p:last-child { margin-bottom: 0; }
+
+  /* 주차별 테이블 */
+  .week-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-top: 0.5rem;
+  }
+
+  .week-table th {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gray-500);
+    padding: 0.6rem 0.8rem;
+    text-align: left;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .week-table td {
+    padding: 0.8rem;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    color: var(--gray-100);
+    vertical-align: top;
+    line-height: 1.6;
+  }
+
+  .week-table tr:last-child td { border-bottom: none; }
+
+  .week-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .week-badge {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    padding: 0.2rem 0.5rem;
+    border: 1px solid rgba(201,168,76,0.3);
+    color: var(--gold);
+    border-radius: 1px;
+    white-space: nowrap;
+  }
+
+  /* KPI 태그 */
+  .kpi-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+  }
+
+  .kpi-tag {
+    font-size: 12px;
+    padding: 0.3rem 0.75rem;
+    background: rgba(44,74,62,0.3);
+    border: 1px solid rgba(61,107,92,0.4);
+    color: #7dc4a8;
+    border-radius: 1px;
+  }
+
+  /* 리스크 태그 */
+  .risk-tag {
+    font-size: 12px;
+    padding: 0.3rem 0.75rem;
+    background: rgba(90,50,30,0.3);
+    border: 1px solid rgba(180,100,60,0.3);
+    color: #e8a87a;
+    border-radius: 1px;
+  }
+
+  /* 불릿 리스트 */
+  .bullet-list {
+    list-style: none;
+    margin-top: 0.5rem;
+  }
+
+  .bullet-list li {
+    font-size: 14px;
+    color: var(--gray-100);
+    padding: 0.4rem 0;
+    padding-left: 1.2rem;
+    position: relative;
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+  .bullet-list li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--gold);
+    font-size: 11px;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding: 2rem 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .footer-left {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--gray-700);
+    letter-spacing: 0.1em;
+  }
+
+  .footer-right {
+    font-size: 12px;
+    color: var(--gray-700);
+  }
+
+  .footer-right a {
+    color: var(--gold);
+    text-decoration: none;
+  }
+
+  /* 에러 메시지 */
+  .error-msg {
+    display: none;
+    padding: 1rem 1.5rem;
+    background: rgba(200,60,60,0.1);
+    border: 1px solid rgba(200,60,60,0.3);
+    border-radius: 2px;
+    font-size: 13px;
+    color: #e88;
+    line-height: 1.6;
+  }
+
+  /* 반응형 */
+  @media (max-width: 900px) {
+    nav { padding: 0 1.5rem; }
+    .nav-links { display: none; }
+    .hero { grid-template-columns: 1fr; padding: 120px 1.5rem 40px; gap: 2rem; }
+    .main { grid-template-columns: 1fr; padding: 0 1.5rem 4rem; }
+    .form-panel { position: static; }
+    footer { padding: 1.5rem; flex-direction: column; gap: 0.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">MD Dashboard</div>
+  <div class="nav-links">
+    <a href="index.html">HOME</a>
+    <a href="md-season-planner.html" class="active">MD 시즌 플랜</a>
+    <a href="trend-report.html">트렌드 리포트</a>
+    <a href="price-strategy.html">가격 전략</a>
+    <a href="inventory.html">재고 진단</a>
+  </div>
+  <div class="nav-badge">Powered by Claude AI · Lee Hyoseok MD</div>
+</nav>
+
+<section class="hero">
+  <div>
+    <div class="hero-eyebrow">AI-Powered Tool</div>
+    <h1>시즌 MD 플랜<br><em>생성기</em></h1>
+  </div>
+  <div>
+    <p class="hero-desc">
+      18년 남성복 MD 경험을 담은 AI 어시스턴트.<br>
+      카테고리, 시즌, 예산, 브랜드 포지션을 입력하면<br>
+      실무에 바로 쓸 수 있는 주차별 MD 플랜을 생성합니다.
+    </p>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-num">12W</div>
+        <div class="stat-label">주차별 플랜</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">AI</div>
+        <div class="stat-label">Claude 기반</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">MD</div>
+        <div class="stat-label">실무 최적화</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="main">
+
+  <!-- 좌측: 입력 폼 -->
+  <div class="form-panel">
+    <div class="panel-title">플랜 설정 입력</div>
+
+    <div class="form-group">
+      <label>브랜드명 / 사업부<span class="required-dot"></span></label>
+      <input type="text" id="brand" placeholder="예: 브루노바피, 남성캐주얼 TF" />
+    </div>
+
+    <div class="grid-2">
+      <div class="form-group">
+        <label>시즌<span class="required-dot"></span></label>
+        <select id="season">
+          <option value="">선택</option>
+          <option value="25SS">25 S/S</option>
+          <option value="25FW">25 F/W</option>
+          <option value="26SS">26 S/S</option>
+          <option value="26FW">26 F/W</option>
+          <option value="AW">연중 상시</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>주력 카테고리<span class="required-dot"></span></label>
+        <select id="category">
+          <option value="">선택</option>
+          <option value="수트/자켓">수트 / 자켓</option>
+          <option value="캐주얼 상의">캐주얼 상의</option>
+          <option value="아우터">아우터</option>
+          <option value="팬츠">팬츠</option>
+          <option value="셔츠/타이">셔츠 / 타이</option>
+          <option value="니트웨어">니트웨어</option>
+          <option value="토탈 코디">토탈 코디</option>
+          <option value="액세서리">액세서리</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>타깃 고객<span class="required-dot"></span></label>
+      <select id="target">
+        <option value="">선택</option>
+        <option value="20대 남성">20대 남성 (트렌드 민감)</option>
+        <option value="30대 남성">30대 남성 (직장인 중심)</option>
+        <option value="40-50대 남성">40-50대 남성 (품질 중시)</option>
+        <option value="30-40대 직장인">30-40대 직장인</option>
+        <option value="전 연령대">전 연령대</option>
+      </select>
+    </div>
+
+    <div class="grid-2">
+      <div class="form-group">
+        <label>가격대 포지션<span class="required-dot"></span></label>
+        <select id="price">
+          <option value="">선택</option>
+          <option value="매스 (5-10만원대)">매스 (5~10만)</option>
+          <option value="볼륨 (10-20만원대)">볼륨 (10~20만)</option>
+          <option value="프리미엄 (20-40만원대)">프리미엄 (20~40만)</option>
+          <option value="럭셔리 (40만원 이상)">럭셔리 (40만+)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>시즌 예산 (억원)</label>
+        <input type="number" id="budget" placeholder="예: 30" min="1" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>판매 채널 <span style="color:var(--gray-500);font-size:10px">(복수 선택)</span></label>
+      <div class="checkbox-group">
+        <label class="chip-label"><input type="checkbox" value="백화점" checked><span class="chip">백화점</span></label>
+        <label class="chip-label"><input type="checkbox" value="자사몰"><span class="chip">자사몰</span></label>
+        <label class="chip-label"><input type="checkbox" value="무신사"><span class="chip">무신사</span></label>
+        <label class="chip-label"><input type="checkbox" value="아울렛"><span class="chip">아울렛</span></label>
+        <label class="chip-label"><input type="checkbox" value="홈쇼핑"><span class="chip">홈쇼핑</span></label>
+        <label class="chip-label"><input type="checkbox" value="오프라인 직영"><span class="chip">직영점</span></label>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>브랜드 컨셉 / 특이사항</label>
+      <textarea id="concept" placeholder="예: 4050 남성 타깃, 고급 소재 중심, 컨템포러리 무드. 전 시즌 아우터 소화율 72%로 재고 이슈 있었음."></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>플랜 기간</label>
+      <select id="duration">
+        <option value="12주">12주 (표준 시즌)</option>
+        <option value="8주">8주 (압축형)</option>
+        <option value="16주">16주 (장기 플랜)</option>
+      </select>
+    </div>
+
+    <button class="generate-btn" id="generateBtn" onclick="generatePlan()">
+      <span class="btn-spinner" id="btnSpinner"></span>
+      <span id="btnText">▶ MD 플랜 생성</span>
+    </button>
+
+    <div class="error-msg" id="errorMsg"></div>
+  </div>
+
+  <!-- 우측: 결과 -->
+  <div class="output-panel">
+    <div class="output-header">
+      <div class="output-title">생성된 MD 플랜</div>
+      <button class="copy-btn" id="copyBtn" onclick="copyPlan()" style="display:none">복사</button>
+    </div>
+
+    <!-- 빈 상태 -->
+    <div class="empty-state" id="emptyState">
+      <div class="empty-icon">◈</div>
+      <div class="empty-title">플랜을 생성해 주세요</div>
+      <div class="empty-sub">좌측 폼에 브랜드 정보와 시즌 조건을 입력하고<br>생성 버튼을 누르면 AI가 MD 플랜을 만들어드립니다.</div>
+    </div>
+
+    <!-- 스트리밍 중 -->
+    <div class="streaming-state" id="streamingState">
+      <div class="streaming-label">
+        <div class="pulse-dot"></div>
+        AI 분석 중 · 플랜 생성 중
+      </div>
+      <div id="stream-output"></div>
+    </div>
+
+    <!-- 완성된 플랜 -->
+    <div class="plan-result" id="planResult"></div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-left">SEASON MD PLANNER © 2026</div>
+  <div class="footer-right">Built by <a href="https://leehyoseok.vercel.app" target="_blank">Lee Hyoseok</a> · 18년 남성복 MD</div>
+</footer>
+
+<script>
+let fullPlanText = '';
+
+function getCheckedChannels() {
+  return Array.from(document.querySelectorAll('.checkbox-group input:checked'))
+    .map(cb => cb.value).join(', ');
+}
+
+function showError(msg) {
+  const el = document.getElementById('errorMsg');
+  el.textContent = msg;
+  el.style.display = 'block';
+  setTimeout(() => el.style.display = 'none', 5000);
+}
+
+function setLoading(on) {
+  const btn = document.getElementById('generateBtn');
+  const spinner = document.getElementById('btnSpinner');
+  const text = document.getElementById('btnText');
+  btn.disabled = on;
+  spinner.style.display = on ? 'block' : 'none';
+  text.textContent = on ? '생성 중...' : '▶ MD 플랜 생성';
+}
+
+async function generatePlan() {
+  const brand = document.getElementById('brand').value.trim();
+  const season = document.getElementById('season').value;
+  const category = document.getElementById('category').value;
+  const target = document.getElementById('target').value;
+  const price = document.getElementById('price').value;
+
+  if (!brand || !season || !category || !target || !price) {
+    showError('필수 항목(브랜드명, 시즌, 카테고리, 타깃, 가격대)을 입력해 주세요.');
+    return;
+  }
+
+  const budget = document.getElementById('budget').value;
+  const channels = getCheckedChannels();
+  const concept = document.getElementById('concept').value.trim();
+  const duration = document.getElementById('duration').value;
+
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('planResult').style.display = 'none';
+  document.getElementById('copyBtn').style.display = 'none';
+  const streamState = document.getElementById('streamingState');
+  streamState.style.display = 'flex';
+  document.getElementById('stream-output').textContent = '';
+  fullPlanText = '';
+  setLoading(true);
+
+  const prompt = `당신은 18년 경력의 남성복 MD 전문가입니다. 아래 조건에 맞는 시즌 MD 플랜을 작성해 주세요.
+
+[입력 조건]
+- 브랜드/사업부: ${brand}
+- 시즌: ${season}
+- 주력 카테고리: ${category}
+- 타깃 고객: ${target}
+- 가격대 포지션: ${price}
+- 시즌 예산: ${budget ? budget + '억원' : '미입력'}
+- 판매 채널: ${channels || '미선택'}
+- 브랜드 컨셉/특이사항: ${concept || '없음'}
+- 플랜 기간: ${duration}
+
+아래 구조로 상세한 MD 플랜을 작성하세요. 실무에 바로 활용 가능한 구체적 내용으로 작성하고, 각 섹션은 【섹션명】으로 구분해 주세요.
+
+【1. 시즌 전략 개요】
+- 시즌 핵심 테마 및 컨셉 방향
+- 전략적 포지셔닝 (경쟁 브랜드 대비)
+- 시즌 목표 매출 및 주요 KPI 제안 (예산 기반)
+
+【2. 카테고리 구성 전략 (MD Mix)】
+- 메인 카테고리 비중 및 구성 제안
+- 가격대별 라인업 구성 (볼륨존/프리미엄/스팟 비율)
+- 컬러/소재 방향성
+
+【3. 주차별 전개 계획 (${duration})】
+아래 형식으로 작성:
+W01 | [날짜 가이드] | [핵심 행사/이슈] | [MD 액션] | [중점 카테고리]
+W02 | ...
+(전체 주차 모두 작성)
+
+【4. 채널별 운영 전략】
+- 각 채널(${channels})별 역할 정의
+- 채널별 매출 비중 목표
+- 채널 특성에 맞는 상품 배분 전략
+
+【5. 핵심 KPI 및 성과 지표】
+- 시즌 목표 KPI 목록
+- 주차별 체크 포인트
+- 리스크 관리 지표
+
+【6. 리스크 요인 및 대응 전략】
+- 주요 리스크 3~5가지
+- 각 리스크별 대응 방안
+- 재고 소화 시나리오 (정상/마크다운 타임라인)
+
+【7. MD 실행 체크리스트】
+- 시즌 전 준비사항 (D-90, D-60, D-30)
+- 시즌 중 관리 포인트
+- 시즌 후 평가 항목`;
+
+  try {
+    const res = await fetch('/api/md-season-planner', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'API 오류');
+    fullPlanText = data.content;
+    streamState.style.display = 'none';
+    renderPlan(fullPlanText, { brand, season, category, target, price, duration });
+    document.getElementById('copyBtn').style.display = 'block';
+
+  } catch (e) {
+    streamState.style.display = 'none';
+    document.getElementById('emptyState').style.display = 'flex';
+    showError('오류: ' + e.message);
+  } finally {
+    setLoading(false);
+  }
+}
+
+function renderPlan(text, meta) {
+  const container = document.getElementById('planResult');
+  container.innerHTML = '';
+
+  // 메타 배지
+  const metaEl = document.createElement('div');
+  metaEl.className = 'plan-meta';
+  metaEl.innerHTML = `
+    <div class="plan-meta-item"><strong>브랜드</strong>${meta.brand}</div>
+    <div class="plan-meta-divider"></div>
+    <div class="plan-meta-item"><strong>시즌</strong>${meta.season}</div>
+    <div class="plan-meta-divider"></div>
+    <div class="plan-meta-item"><strong>카테고리</strong>${meta.category}</div>
+    <div class="plan-meta-divider"></div>
+    <div class="plan-meta-item"><strong>타깃</strong>${meta.target}</div>
+    <div class="plan-meta-divider"></div>
+    <div class="plan-meta-item"><strong>기간</strong>${meta.duration}</div>
+  `;
+  container.appendChild(metaEl);
+
+  // 섹션 파싱
+  const sectionRegex = /【(\d+\.\s*[^】]+)】([\s\S]*?)(?=【\d+|$)/g;
+  let match;
+  let idx = 0;
+
+  while ((match = sectionRegex.exec(text)) !== null) {
+    idx++;
+    const title = match[1].trim();
+    const body = match[2].trim();
+
+    const card = document.createElement('div');
+    card.className = 'section-card';
+
+    const header = document.createElement('div');
+    header.className = 'section-header';
+    header.innerHTML = `
+      <span class="section-num">${String(idx).padStart(2,'0')}</span>
+      <span class="section-title">${title}</span>
+      <span class="section-toggle">▼</span>
+    `;
+
+    const bodyEl = document.createElement('div');
+    bodyEl.className = 'section-body' + (idx <= 2 ? ' open' : '');
+
+    // 주차별 테이블 파싱
+    if (title.includes('주차별')) {
+      const weekLines = body.split('\n').filter(l => /^W\d+/.test(l.trim()));
+      if (weekLines.length > 0) {
+        const table = document.createElement('table');
+        table.className = 'week-table';
+        table.innerHTML = `<thead><tr>
+          <th>주차</th><th>시기 가이드</th><th>핵심 이슈</th><th>MD 액션</th><th>중점 카테고리</th>
+        </tr></thead>`;
+        const tbody = document.createElement('tbody');
+
+        weekLines.forEach(line => {
+          const parts = line.split('|').map(s => s.trim());
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><span class="week-badge">${parts[0] || ''}</span></td>
+            <td>${parts[1] || ''}</td>
+            <td>${parts[2] || ''}</td>
+            <td>${parts[3] || ''}</td>
+            <td>${parts[4] || ''}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+        table.appendChild(tbody);
+
+        const nonWeek = body.split('\n').filter(l => !/^W\d+/.test(l.trim())).join('\n').trim();
+        if (nonWeek) {
+          const p = document.createElement('p');
+          p.textContent = nonWeek;
+          bodyEl.appendChild(p);
+        }
+        bodyEl.appendChild(table);
+      } else {
+        renderBodyText(bodyEl, body);
+      }
+    }
+    // KPI 섹션
+    else if (title.includes('KPI') || title.includes('성과')) {
+      const lines = body.split('\n').filter(l => l.trim());
+      const kpiDiv = document.createElement('div');
+      kpiDiv.className = 'kpi-list';
+      const others = [];
+      lines.forEach(line => {
+        const t = line.replace(/^[-•*]\s*/, '').trim();
+        if (!t) return;
+        if (t.length < 40 && (t.includes('%') || t.includes('율') || t.includes('KPI') || t.includes('목표'))) {
+          const tag = document.createElement('span');
+          tag.className = 'kpi-tag';
+          tag.textContent = t;
+          kpiDiv.appendChild(tag);
+        } else {
+          others.push(t);
+        }
+      });
+      if (kpiDiv.children.length) bodyEl.appendChild(kpiDiv);
+      if (others.length) {
+        const ul = document.createElement('ul');
+        ul.className = 'bullet-list';
+        others.forEach(t => { const li = document.createElement('li'); li.textContent = t; ul.appendChild(li); });
+        bodyEl.appendChild(ul);
+      }
+    }
+    // 리스크 섹션
+    else if (title.includes('리스크')) {
+      const lines = body.split('\n').filter(l => l.trim());
+      const riskDiv = document.createElement('div');
+      riskDiv.className = 'kpi-list';
+      const others = [];
+      lines.forEach(line => {
+        const t = line.replace(/^[-•*\d+\.]\s*/, '').trim();
+        if (!t) return;
+        if (t.length < 35) {
+          const tag = document.createElement('span');
+          tag.className = 'risk-tag';
+          tag.textContent = t;
+          riskDiv.appendChild(tag);
+        } else {
+          others.push(t);
+        }
+      });
+      if (riskDiv.children.length) bodyEl.appendChild(riskDiv);
+      if (others.length) {
+        const ul = document.createElement('ul');
+        ul.className = 'bullet-list';
+        others.forEach(t => { const li = document.createElement('li'); li.textContent = t; ul.appendChild(li); });
+        bodyEl.appendChild(ul);
+      }
+    }
+    else {
+      renderBodyText(bodyEl, body);
+    }
+
+    header.addEventListener('click', () => {
+      const isOpen = bodyEl.classList.contains('open');
+      bodyEl.classList.toggle('open', !isOpen);
+      header.querySelector('.section-toggle').textContent = isOpen ? '▼' : '▲';
+    });
+    header.querySelector('.section-toggle').textContent = bodyEl.classList.contains('open') ? '▲' : '▼';
+
+    card.appendChild(header);
+    card.appendChild(bodyEl);
+    container.appendChild(card);
+  }
+
+  // 파싱 실패 시 raw 텍스트
+  if (idx === 0) {
+    const fallback = document.createElement('div');
+    fallback.style.cssText = 'padding:1.5rem;font-size:14px;line-height:1.9;color:var(--gray-100);white-space:pre-wrap;';
+    fallback.textContent = text;
+    container.appendChild(fallback);
+  }
+
+  container.style.display = 'flex';
+}
+
+function renderBodyText(el, body) {
+  const lines = body.split('\n').filter(l => l.trim());
+  if (!lines.length) return;
+  const hasBullets = lines.some(l => /^[-•*]/.test(l.trim()));
+  if (hasBullets) {
+    const ul = document.createElement('ul');
+    ul.className = 'bullet-list';
+    lines.forEach(line => {
+      const t = line.replace(/^[-•*]\s*/, '').trim();
+      if (!t) return;
+      const li = document.createElement('li');
+      li.textContent = t;
+      ul.appendChild(li);
+    });
+    el.appendChild(ul);
+  } else {
+    const para = document.createElement('p');
+    para.textContent = body;
+    el.appendChild(para);
+  }
+}
+
+function copyPlan() {
+  if (!fullPlanText) return;
+  navigator.clipboard.writeText(fullPlanText).then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = '복사됨 ✓';
+    setTimeout(() => btn.textContent = '복사', 2000);
+  });
+}
+</script>
+</body>
+</html>

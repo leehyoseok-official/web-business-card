@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trend Report Generator — AI 트렌드 리포트 생성기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=DM+Serif+Display:ital@0;1&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --white: #f8f6f1;
+    --cream: #f0ede4;
+    --gold: #c9a84c;
+    --gold-light: #e8d5a0;
+    --gold-dark: #8a6f2e;
+    --gray-100: #e8e5de;
+    --gray-300: #bbb8b0;
+    --gray-500: #7a7770;
+    --gray-700: #3a3830;
+    --accent: #2c4a3e;
+    --accent-light: #3d6b5c;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 3rem; height: 64px;
+    background: rgba(10,10,10,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(201,168,76,0.2);
+  }
+  .nav-logo { font-family: 'Space Mono', monospace; font-size: 13px; letter-spacing: 0.2em; color: var(--gold); text-transform: uppercase; }
+  .nav-links { display: flex; gap: 2rem; align-items: center; }
+  .nav-links a { font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.15em; color: var(--gray-500); text-decoration: none; text-transform: uppercase; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--gold); }
+  .nav-links a.active { color: var(--gold); }
+  .nav-badge { font-size: 11px; color: var(--gray-500); letter-spacing: 0.1em; font-family: 'Space Mono', monospace; }
+
+  /* HERO */
+  .hero {
+    padding: 140px 3rem 60px;
+    max-width: 1100px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: end;
+  }
+  .hero-eyebrow {
+    font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.3em;
+    color: var(--gold); text-transform: uppercase; margin-bottom: 1.5rem;
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .hero-eyebrow::before { content:''; display:block; width:32px; height:1px; background:var(--gold); }
+  .hero h1 {
+    font-family: 'DM Serif Display', serif; font-size: clamp(2.8rem, 5vw, 4.2rem);
+    font-weight: 400; line-height: 1.1; letter-spacing: -0.02em; color: var(--white);
+  }
+  .hero h1 em { font-style: italic; color: var(--gold); }
+  .hero-desc { font-size: 15px; line-height: 1.8; color: var(--gray-300); font-weight: 300; }
+  .hero-stats { display: flex; gap: 2rem; margin-top: 2rem; }
+  .stat { border-left: 2px solid var(--gold); padding-left: 1rem; }
+  .stat-num { font-family: 'Space Mono', monospace; font-size: 1.8rem; color: var(--gold); font-weight: 700; }
+  .stat-label { font-size: 11px; color: var(--gray-500); letter-spacing: 0.1em; margin-top: 2px; }
+
+  /* MAIN */
+  .main { max-width: 1100px; margin: 0 auto; padding: 0 3rem 6rem; display: grid; grid-template-columns: 380px 1fr; gap: 2rem; }
+
+  /* FORM PANEL */
+  .form-panel {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 2px; padding: 2.5rem; position: sticky; top: 84px; height: fit-content;
+  }
+  .panel-title {
+    font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.3em;
+    color: var(--gold); text-transform: uppercase; margin-bottom: 2rem;
+    padding-bottom: 1rem; border-bottom: 1px solid rgba(201,168,76,0.15);
+  }
+  .form-group { margin-bottom: 1.5rem; }
+  label { display: block; font-size: 11px; letter-spacing: 0.15em; color: var(--gray-300); text-transform: uppercase; margin-bottom: 0.6rem; font-weight: 400; }
+  .required-dot { display: inline-block; width: 4px; height: 4px; background: var(--gold); border-radius: 50%; margin-left: 4px; vertical-align: middle; margin-bottom: 2px; }
+  select, input[type="text"], textarea {
+    width: 100%; background: rgba(255,255,255,0.04); border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 1px; color: var(--white); font-family: 'Noto Sans KR', sans-serif;
+    font-size: 14px; font-weight: 300; padding: 0.75rem 1rem; outline: none;
+    transition: border-color 0.2s, background 0.2s; -webkit-appearance: none;
+  }
+  select {
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M0 0l6 8 6-8' fill='none' stroke='%23c9a84c' stroke-width='1.5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 1rem center; padding-right: 2.5rem;
+  }
+  select option { background: #1a1a1a; color: var(--white); }
+  select:focus, input:focus, textarea:focus { border-color: var(--gold); background: rgba(201,168,76,0.05); }
+  textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+  /* 태그 입력 */
+  .tag-input-wrap {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 1px; padding: 0.5rem; display: flex; flex-wrap: wrap; gap: 0.4rem;
+    min-height: 44px; cursor: text; transition: border-color 0.2s;
+  }
+  .tag-input-wrap:focus-within { border-color: var(--gold); background: rgba(201,168,76,0.05); }
+  .tag-item {
+    display: flex; align-items: center; gap: 0.3rem;
+    background: rgba(201,168,76,0.15); border: 1px solid rgba(201,168,76,0.35);
+    color: var(--gold); font-size: 12px; padding: 0.2rem 0.5rem; border-radius: 1px;
+    white-space: nowrap;
+  }
+  .tag-remove { cursor: pointer; opacity: 0.6; transition: opacity 0.15s; font-size: 11px; }
+  .tag-remove:hover { opacity: 1; }
+  .tag-input-inner {
+    border: none; background: transparent; color: var(--white);
+    font-family: 'Noto Sans KR', sans-serif; font-size: 13px; font-weight: 300;
+    outline: none; min-width: 80px; flex: 1; padding: 0.2rem 0.3rem;
+  }
+  .tag-hint { font-size: 10px; color: var(--gray-700); margin-top: 0.3rem; letter-spacing: 0.05em; }
+
+  /* 체크박스 칩 */
+  .checkbox-group { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .chip-label { display: flex; align-items: center; cursor: pointer; }
+  .chip-label input[type="checkbox"] { display: none; }
+  .chip {
+    padding: 0.35rem 0.8rem; border: 1px solid rgba(201,168,76,0.25); border-radius: 1px;
+    font-size: 12px; color: var(--gray-300); transition: all 0.15s; user-select: none; white-space: nowrap;
+  }
+  .chip-label input:checked + .chip { background: rgba(201,168,76,0.15); border-color: var(--gold); color: var(--gold); }
+
+  /* 생성 버튼 */
+  .generate-btn {
+    width: 100%; margin-top: 2rem; padding: 1rem;
+    background: var(--gold); border: none; border-radius: 1px; color: var(--black);
+    font-family: 'Space Mono', monospace; font-size: 12px; font-weight: 700;
+    letter-spacing: 0.2em; text-transform: uppercase; cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    display: flex; align-items: center; justify-content: center; gap: 0.75rem;
+  }
+  .generate-btn:hover { background: var(--gold-light); }
+  .generate-btn:active { transform: scale(0.99); }
+  .generate-btn:disabled { background: var(--gray-700); color: var(--gray-500); cursor: not-allowed; }
+  .btn-spinner {
+    display: none; width: 14px; height: 14px;
+    border: 2px solid rgba(0,0,0,0.3); border-top-color: var(--black);
+    border-radius: 50%; animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* OUTPUT */
+  .output-panel { min-height: 400px; }
+  .output-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(201,168,76,0.15);
+  }
+  .output-title { font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.3em; color: var(--gold); text-transform: uppercase; }
+  .header-actions { display: flex; gap: 0.5rem; }
+  .action-btn {
+    font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.15em;
+    color: var(--gray-500); background: none; border: 1px solid rgba(255,255,255,0.1);
+    padding: 0.4rem 0.8rem; cursor: pointer; text-transform: uppercase;
+    transition: all 0.2s; border-radius: 1px;
+  }
+  .action-btn:hover { color: var(--gold); border-color: rgba(201,168,76,0.4); }
+
+  /* 빈 상태 */
+  .empty-state {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    min-height: 480px; gap: 1.5rem; border: 1px dashed rgba(201,168,76,0.15);
+    border-radius: 2px; text-align: center; padding: 3rem;
+  }
+  .empty-icon { font-size: 3rem; opacity: 0.25; }
+  .empty-title { font-family: 'DM Serif Display', serif; font-size: 1.5rem; color: var(--gray-500); font-weight: 400; }
+  .empty-sub { font-size: 13px; color: var(--gray-700); line-height: 1.7; max-width: 300px; }
+
+  /* 스트리밍 */
+  .streaming-state {
+    display: none; flex-direction: column; gap: 1rem;
+    border: 1px solid rgba(201,168,76,0.2); border-radius: 2px; padding: 2rem; min-height: 400px;
+  }
+  .streaming-label {
+    font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.25em;
+    color: var(--gold); text-transform: uppercase; display: flex; align-items: center; gap: 0.5rem;
+  }
+  .pulse-dot { width: 6px; height: 6px; background: var(--gold); border-radius: 50%; animation: pulse 1s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.8)} }
+  #stream-output { font-size: 14px; line-height: 1.9; color: var(--gray-100); white-space: pre-wrap; font-weight: 300; }
+
+  /* 결과 */
+  .report-result { display: none; flex-direction: column; gap: 1.5rem; }
+
+  /* 리포트 헤더 배너 */
+  .report-banner {
+    padding: 2rem 2.5rem;
+    background: rgba(201,168,76,0.06);
+    border: 1px solid rgba(201,168,76,0.25);
+    border-radius: 2px;
+    display: flex; justify-content: space-between; align-items: flex-start; gap: 2rem;
+  }
+  .banner-left { flex: 1; }
+  .banner-season {
+    font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.3em;
+    color: var(--gold); text-transform: uppercase; margin-bottom: 0.75rem;
+  }
+  .banner-title { font-family: 'DM Serif Display', serif; font-size: 1.8rem; font-weight: 400; color: var(--white); line-height: 1.2; }
+  .banner-subtitle { font-size: 13px; color: var(--gray-300); margin-top: 0.5rem; font-weight: 300; }
+  .banner-right { display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-end; }
+  .banner-meta { font-size: 11px; color: var(--gray-500); font-family: 'Space Mono', monospace; letter-spacing: 0.1em; }
+
+  /* 트렌드 키워드 카드 그리드 */
+  .trend-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.75rem; }
+  .trend-keyword-card {
+    padding: 1rem; border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 2px; text-align: center; background: rgba(255,255,255,0.02);
+    transition: border-color 0.2s, transform 0.15s;
+  }
+  .trend-keyword-card:hover { border-color: rgba(201,168,76,0.3); transform: translateY(-2px); }
+  .keyword-emoji { font-size: 1.4rem; margin-bottom: 0.5rem; }
+  .keyword-text { font-size: 13px; color: var(--gray-100); font-weight: 400; }
+  .keyword-sub { font-size: 11px; color: var(--gray-500); margin-top: 0.25rem; }
+
+  /* 컬러 팔레트 */
+  .color-palette { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.75rem; }
+  .color-swatch-wrap { display: flex; flex-direction: column; align-items: center; gap: 0.4rem; }
+  .color-swatch { width: 48px; height: 48px; border-radius: 1px; border: 1px solid rgba(255,255,255,0.08); }
+  .color-name { font-size: 10px; color: var(--gray-500); text-align: center; max-width: 52px; line-height: 1.3; }
+
+  /* 소재 태그 */
+  .fabric-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
+  .fabric-tag {
+    padding: 0.4rem 0.9rem; border: 1px solid rgba(255,255,255,0.1);
+    font-size: 12px; color: var(--gray-100); border-radius: 1px;
+    background: rgba(255,255,255,0.03);
+  }
+
+  /* 섹션 카드 */
+  .section-card {
+    background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 2px; overflow: hidden; transition: border-color 0.2s;
+  }
+  .section-card:hover { border-color: rgba(201,168,76,0.25); }
+  .section-header {
+    display: flex; align-items: center; gap: 1rem;
+    padding: 1.2rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.06);
+    cursor: pointer; user-select: none;
+  }
+  .section-num { font-family: 'Space Mono', monospace; font-size: 10px; color: var(--gold); letter-spacing: 0.15em; min-width: 28px; }
+  .section-title { font-size: 14px; font-weight: 500; color: var(--white); flex: 1; letter-spacing: 0.02em; }
+  .section-badge {
+    font-family: 'Space Mono', monospace; font-size: 9px; padding: 0.2rem 0.6rem;
+    border: 1px solid rgba(201,168,76,0.3); color: var(--gold); border-radius: 1px;
+  }
+  .section-toggle { font-size: 12px; color: var(--gray-500); transition: transform 0.2s; }
+  .section-body { padding: 1.5rem; display: none; }
+  .section-body.open { display: block; }
+  .section-body p { font-size: 14px; line-height: 1.9; color: var(--gray-100); margin-bottom: 1rem; font-weight: 300; }
+  .section-body p:last-child { margin-bottom: 0; }
+
+  /* 불릿 리스트 */
+  .bullet-list { list-style: none; }
+  .bullet-list li { font-size: 14px; color: var(--gray-100); padding: 0.4rem 0 0.4rem 1.2rem; position: relative; line-height: 1.7; font-weight: 300; }
+  .bullet-list li::before { content: '—'; position: absolute; left: 0; color: var(--gold); font-size: 11px; }
+
+  /* 인사이트 하이라이트 */
+  .insight-block {
+    padding: 1.2rem 1.5rem; margin: 0.75rem 0;
+    border-left: 3px solid var(--gold); background: rgba(201,168,76,0.05);
+    border-radius: 0 2px 2px 0;
+  }
+  .insight-block p { font-size: 14px; line-height: 1.8; color: var(--gray-100); margin: 0; font-style: italic; font-weight: 300; }
+
+  /* 비중 바 */
+  .ratio-bar-wrap { margin: 0.5rem 0; }
+  .ratio-row { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem; }
+  .ratio-label { font-size: 12px; color: var(--gray-300); min-width: 90px; }
+  .ratio-bar-bg { flex: 1; height: 4px; background: rgba(255,255,255,0.06); border-radius: 2px; }
+  .ratio-bar-fill { height: 100%; background: var(--gold); border-radius: 2px; transition: width 0.8s ease; }
+  .ratio-pct { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--gold); min-width: 36px; text-align: right; }
+
+  /* 추천 브랜드/키워드 박스 */
+  .ref-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 0.75rem; margin-top: 0.75rem; }
+  .ref-card {
+    padding: 0.8rem 1rem; border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 2px; background: rgba(255,255,255,0.02);
+  }
+  .ref-card-label { font-size: 10px; color: var(--gray-500); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.3rem; }
+  .ref-card-value { font-size: 13px; color: var(--gray-100); font-weight: 400; line-height: 1.5; }
+
+  /* 에러 */
+  .error-msg {
+    display: none; padding: 1rem 1.5rem;
+    background: rgba(200,60,60,0.1); border: 1px solid rgba(200,60,60,0.3);
+    border-radius: 2px; font-size: 13px; color: #e88; line-height: 1.6; margin-top: 1rem;
+  }
+
+  /* 푸터 */
+  footer { border-top: 1px solid rgba(255,255,255,0.06); padding: 2rem 3rem; display: flex; align-items: center; justify-content: space-between; max-width: 1100px; margin: 0 auto; }
+  .footer-left { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--gray-700); letter-spacing: 0.1em; }
+  .footer-right { font-size: 12px; color: var(--gray-700); }
+  .footer-right a { color: var(--gold); text-decoration: none; }
+
+  @media (max-width: 900px) {
+    nav { padding: 0 1.5rem; }
+    .hero { grid-template-columns: 1fr; padding: 120px 1.5rem 40px; gap: 2rem; }
+    .main { grid-template-columns: 1fr; padding: 0 1.5rem 4rem; }
+    .form-panel { position: static; }
+    footer { padding: 1.5rem; flex-direction: column; gap: 0.5rem; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">MD Dashboard</div>
+  <div class="nav-links">
+    <a href="index.html">HOME</a>
+    <a href="md-season-planner.html">MD 시즌 플랜</a>
+    <a href="trend-report.html" class="active">트렌드 리포트</a>
+    <a href="price-strategy.html">가격 전략</a>
+    <a href="inventory.html">재고 진단</a>
+  </div>
+  <div class="nav-badge">Powered by Claude AI · Lee Hyoseok MD</div>
+</nav>
+
+<section class="hero">
+  <div>
+    <div class="hero-eyebrow">Trend Analysis</div>
+    <h1>트렌드 리포트<br><em>생성기</em></h1>
+  </div>
+  <div>
+    <p class="hero-desc">
+      시즌·카테고리·키워드를 입력하면<br>
+      컬러 트렌드, 소재 방향, 실루엣, 스타일 키워드,<br>
+      MD 인사이트까지 담긴 리포트를 즉시 생성합니다.
+    </p>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-num">80%</div>
+        <div class="stat-label">조사 시간 단축</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">7P</div>
+        <div class="stat-label">분석 파트</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">MD</div>
+        <div class="stat-label">실무 최적화</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="main">
+  <!-- 폼 패널 -->
+  <div class="form-panel">
+    <div class="panel-title">리포트 조건 입력</div>
+
+    <div class="form-group">
+      <label>브랜드 / 사업부<span class="required-dot"></span></label>
+      <input type="text" id="brand" placeholder="예: 브루노바피, 남성캐주얼 TF" />
+    </div>
+
+    <div class="grid-2">
+      <div class="form-group">
+        <label>시즌<span class="required-dot"></span></label>
+        <select id="season">
+          <option value="">선택</option>
+          <option value="25SS">25 S/S</option>
+          <option value="25FW">25 F/W</option>
+          <option value="26SS">26 S/S</option>
+          <option value="26FW">26 F/W</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>카테고리<span class="required-dot"></span></label>
+        <select id="category">
+          <option value="">선택</option>
+          <option value="수트/자켓">수트 / 자켓</option>
+          <option value="캐주얼 상의">캐주얼 상의</option>
+          <option value="아우터">아우터</option>
+          <option value="팬츠">팬츠</option>
+          <option value="셔츠">셔츠</option>
+          <option value="니트웨어">니트웨어</option>
+          <option value="토탈 코디">토탈 코디</option>
+          <option value="액세서리">액세서리</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>타깃 고객<span class="required-dot"></span></label>
+      <select id="target">
+        <option value="">선택</option>
+        <option value="20대 남성">20대 남성 (트렌드 민감)</option>
+        <option value="30대 남성">30대 남성 (직장인 중심)</option>
+        <option value="40-50대 남성">40-50대 남성 (품질 중시)</option>
+        <option value="30-40대 직장인">30-40대 직장인</option>
+        <option value="전 연령대">전 연령대</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>트렌드 키워드 <span style="color:var(--gray-500);font-size:10px">(Enter로 추가)</span></label>
+      <div class="tag-input-wrap" id="tagWrap" onclick="document.getElementById('tagInput').focus()">
+        <input type="text" class="tag-input-inner" id="tagInput" placeholder="예: 미니멀, 오버사이즈..." />
+      </div>
+      <div class="tag-hint">Enter 또는 쉼표로 키워드 추가 · 클릭해서 삭제</div>
+    </div>
+
+    <div class="form-group">
+      <label>가격대 포지션</label>
+      <select id="price">
+        <option value="볼륨 (10-20만원대)">볼륨 (10~20만)</option>
+        <option value="매스 (5-10만원대)">매스 (5~10만)</option>
+        <option value="프리미엄 (20-40만원대)">프리미엄 (20~40만)</option>
+        <option value="럭셔리 (40만원 이상)">럭셔리 (40만+)</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>리포트 유형</label>
+      <div class="checkbox-group">
+        <label class="chip-label"><input type="checkbox" value="컬러 트렌드" checked><span class="chip">컬러</span></label>
+        <label class="chip-label"><input type="checkbox" value="소재 트렌드" checked><span class="chip">소재</span></label>
+        <label class="chip-label"><input type="checkbox" value="실루엣/디테일" checked><span class="chip">실루엣</span></label>
+        <label class="chip-label"><input type="checkbox" value="스타일 키워드" checked><span class="chip">스타일 키워드</span></label>
+        <label class="chip-label"><input type="checkbox" value="경쟁 브랜드 동향"><span class="chip">경쟁 브랜드</span></label>
+        <label class="chip-label"><input type="checkbox" value="MD 상품 제안"><span class="chip">MD 제안</span></label>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>참고 정보 / 특이사항</label>
+      <textarea id="note" placeholder="예: 전시즌 네이비 계열 과잉 재고. 런웨이보다 스트리트 실용 트렌드 중심으로 분석 부탁."></textarea>
+    </div>
+
+    <button class="generate-btn" id="generateBtn" onclick="generateReport()">
+      <span class="btn-spinner" id="btnSpinner"></span>
+      <span id="btnText">▶ 트렌드 리포트 생성</span>
+    </button>
+    <div class="error-msg" id="errorMsg"></div>
+  </div>
+
+  <!-- 결과 패널 -->
+  <div class="output-panel">
+    <div class="output-header">
+      <div class="output-title">트렌드 리포트</div>
+      <div class="header-actions">
+        <button class="action-btn" id="copyBtn" onclick="copyReport()" style="display:none">복사</button>
+        <button class="action-btn" id="printBtn" onclick="printReport()" style="display:none">인쇄</button>
+      </div>
+    </div>
+
+    <div class="empty-state" id="emptyState">
+      <div class="empty-icon">◈</div>
+      <div class="empty-title">리포트를 생성해 주세요</div>
+      <div class="empty-sub">시즌·카테고리·키워드를 입력하고<br>생성 버튼을 누르면 트렌드 분석 리포트가 만들어집니다.</div>
+    </div>
+
+    <div class="streaming-state" id="streamingState">
+      <div class="streaming-label"><div class="pulse-dot"></div>트렌드 분석 중 · 리포트 생성 중</div>
+      <div id="stream-output"></div>
+    </div>
+
+    <div class="report-result" id="reportResult"></div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-left">MD DASHBOARD © 2026</div>
+  <div class="footer-right">Built by <a href="https://leehyoseok.vercel.app" target="_blank">Lee Hyoseok</a> · 18년 남성복 MD</div>
+</footer>
+
+<script>
+// ── 태그 입력 ──
+const tags = [];
+const tagInput = document.getElementById('tagInput');
+const tagWrap = document.getElementById('tagWrap');
+
+tagInput.addEventListener('keydown', e => {
+  if ((e.key === 'Enter' || e.key === ',') && tagInput.value.trim()) {
+    e.preventDefault();
+    addTag(tagInput.value.replace(',','').trim());
+    tagInput.value = '';
+  } else if (e.key === 'Backspace' && !tagInput.value && tags.length) {
+    removeTag(tags.length - 1);
+  }
+});
+
+function addTag(text) {
+  if (!text || tags.includes(text) || tags.length >= 10) return;
+  tags.push(text);
+  renderTags();
+}
+
+function removeTag(idx) {
+  tags.splice(idx, 1);
+  renderTags();
+}
+
+function renderTags() {
+  const existing = tagWrap.querySelectorAll('.tag-item');
+  existing.forEach(el => el.remove());
+  tags.forEach((t, i) => {
+    const el = document.createElement('span');
+    el.className = 'tag-item';
+    el.innerHTML = `${t}<span class="tag-remove" onclick="removeTag(${i})">✕</span>`;
+    tagWrap.insertBefore(el, tagInput);
+  });
+}
+
+// ── 유틸 ──
+let fullText = '';
+
+function getChecked(groupSelector) {
+  return Array.from(document.querySelectorAll(groupSelector + ' input:checked')).map(c => c.value).join(', ');
+}
+
+function showError(msg) {
+  const el = document.getElementById('errorMsg');
+  el.textContent = msg; el.style.display = 'block';
+  setTimeout(() => el.style.display = 'none', 6000);
+}
+
+function setLoading(on) {
+  const btn = document.getElementById('generateBtn');
+  document.getElementById('btnSpinner').style.display = on ? 'block' : 'none';
+  document.getElementById('btnText').textContent = on ? '분석 중...' : '▶ 트렌드 리포트 생성';
+  btn.disabled = on;
+}
+
+// ── 생성 ──
+async function generateReport() {
+  const brand = document.getElementById('brand').value.trim();
+  const season = document.getElementById('season').value;
+  const category = document.getElementById('category').value;
+  const target = document.getElementById('target').value;
+
+  if (!brand || !season || !category || !target) {
+    showError('필수 항목(브랜드, 시즌, 카테고리, 타깃)을 입력해 주세요.'); return;
+  }
+
+  const price = document.getElementById('price').value;
+  const note = document.getElementById('note').value.trim();
+  const reportTypes = getChecked('.checkbox-group');
+  const keywords = tags.length ? tags.join(', ') : '없음';
+
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('reportResult').style.display = 'none';
+  document.getElementById('copyBtn').style.display = 'none';
+  document.getElementById('printBtn').style.display = 'none';
+  const streamState = document.getElementById('streamingState');
+  streamState.style.display = 'flex';
+  document.getElementById('stream-output').textContent = '';
+  fullText = '';
+  setLoading(true);
+
+  const prompt = `당신은 18년 경력의 남성복 MD 전문가이자 트렌드 애널리스트입니다.
+아래 조건에 맞는 시즌 트렌드 리포트를 작성해 주세요.
+
+[분석 조건]
+- 브랜드/사업부: ${brand}
+- 시즌: ${season}
+- 주력 카테고리: ${category}
+- 타깃 고객: ${target}
+- 가격대: ${price}
+- 트렌드 참고 키워드: ${keywords}
+- 요청 분석 파트: ${reportTypes}
+- 특이사항: ${note || '없음'}
+
+아래 구조로 작성하세요. 각 섹션은 【섹션명】으로 구분하고, 실무 MD가 바로 활용할 수 있는 인사이트 중심으로 작성하세요.
+
+【1. 시즌 트렌드 오버뷰】
+- ${season} 시즌 ${category} 카테고리 핵심 트렌드 방향 3~4가지
+- 매크로 트렌드가 ${target} 타깃에 미치는 영향
+- 전 시즌 대비 주요 변화 포인트
+
+【2. 컬러 트렌드】
+- 시즌 핵심 컬러 6~8가지 (컬러명: 설명 형식으로)
+- 컬러별 HEX 코드 추정값 (예: #B5A192)
+- 카테고리별 컬러 적용 비중 제안 (메인컬러/어소트컬러/악센트컬러)
+- MD 컬러 전략 인사이트
+
+【3. 소재 트렌드】
+- 시즌 주력 소재 5~7가지
+- 각 소재의 특성, 가격대 적합성, 활용 포인트
+- 지속가능성/기능성 소재 동향
+
+【4. 실루엣 & 디테일 트렌드】
+- 핵심 실루엣 방향 (핏, 라인, 비례)
+- 주목해야 할 디테일 요소 5가지 이상
+- ${category} 카테고리 적용 포인트
+
+【5. 스타일 키워드 & 무드】
+- 시즌 핵심 스타일 키워드 8~10개
+- 각 키워드별 코디 방향 및 아이템 연계
+- 타깃 라이프스타일과의 접점
+
+【6. 경쟁 브랜드 & 시장 동향】
+- 동가격대 경쟁 브랜드 주요 동향
+- 국내외 주목 레퍼런스 브랜드 3~5개
+- 시장 기회 요인 및 위협 요인
+
+【7. MD 상품 제안 & 실행 인사이트】
+- 시즌 필수 기획 아이템 5~7가지 (아이템명, 트렌드 근거, 예상 반응)
+- 기피해야 할 아이템/디자인 방향
+- 구매 전략 제안 (발주 타이밍, 볼륨 제안)
+- 시즌 핵심 메시지 한 줄 요약`;
+
+  try {
+    const res = await fetch('/api/trend-report', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt })
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'API 오류');
+
+    fullText = data.content;
+    streamState.style.display = 'none';
+    renderReport(fullText, { brand, season, category, target });
+    document.getElementById('copyBtn').style.display = 'block';
+    document.getElementById('printBtn').style.display = 'block';
+
+  } catch (e) {
+    streamState.style.display = 'none';
+    document.getElementById('emptyState').style.display = 'flex';
+    showError('오류: ' + e.message);
+  } finally {
+    setLoading(false);
+  }
+}
+
+// ── 렌더링 ──
+function renderReport(text, meta) {
+  const container = document.getElementById('reportResult');
+  container.innerHTML = '';
+
+  // 배너
+  const banner = document.createElement('div');
+  banner.className = 'report-banner';
+  banner.innerHTML = `
+    <div class="banner-left">
+      <div class="banner-season">${meta.season} TREND REPORT</div>
+      <div class="banner-title">${meta.category}<br>트렌드 분석</div>
+      <div class="banner-subtitle">${meta.brand} · ${meta.target}</div>
+    </div>
+    <div class="banner-right">
+      <div class="banner-meta">생성일 ${new Date().toLocaleDateString('ko-KR')}</div>
+      <div class="banner-meta">POWERED BY CLAUDE AI</div>
+    </div>
+  `;
+  container.appendChild(banner);
+
+  // 섹션 파싱
+  const sectionRegex = /【(\d+\.\s*[^】]+)】([\s\S]*?)(?=【\d+|$)/g;
+  const sectionBadges = ['OVERVIEW','COLOR','FABRIC','SILHOUETTE','KEYWORD','MARKET','MD INSIGHT'];
+  let match, idx = 0;
+
+  while ((match = sectionRegex.exec(text)) !== null) {
+    const title = match[1].trim();
+    const body = match[2].trim();
+    const card = document.createElement('div');
+    card.className = 'section-card';
+
+    const header = document.createElement('div');
+    header.className = 'section-header';
+    header.innerHTML = `
+      <span class="section-num">${String(idx+1).padStart(2,'0')}</span>
+      <span class="section-title">${title}</span>
+      <span class="section-badge">${sectionBadges[idx] || 'PART'}</span>
+      <span class="section-toggle">${idx < 2 ? '▲' : '▼'}</span>
+    `;
+
+    const bodyEl = document.createElement('div');
+    bodyEl.className = 'section-body' + (idx < 2 ? ' open' : '');
+
+    // 컬러 섹션 특별 처리
+    if (title.includes('컬러')) {
+      renderColorSection(bodyEl, body);
+    }
+    // 소재 섹션
+    else if (title.includes('소재')) {
+      renderFabricSection(bodyEl, body);
+    }
+    // 스타일 키워드 섹션
+    else if (title.includes('스타일 키워드') || title.includes('무드')) {
+      renderKeywordSection(bodyEl, body);
+    }
+    // 나머지
+    else {
+      renderGenericSection(bodyEl, body);
+    }
+
+    header.addEventListener('click', () => {
+      const isOpen = bodyEl.classList.contains('open');
+      bodyEl.classList.toggle('open', !isOpen);
+      header.querySelector('.section-toggle').textContent = isOpen ? '▼' : '▲';
+    });
+
+    card.appendChild(header);
+    card.appendChild(bodyEl);
+    container.appendChild(card);
+    idx++;
+  }
+
+  if (idx === 0) {
+    const fallback = document.createElement('div');
+    fallback.style.cssText = 'padding:1.5rem;font-size:14px;line-height:1.9;color:var(--gray-100);white-space:pre-wrap;';
+    fallback.textContent = text;
+    container.appendChild(fallback);
+  }
+
+  container.style.display = 'flex';
+}
+
+function renderColorSection(el, body) {
+  const lines = body.split('\n').filter(l => l.trim());
+  const hexRegex = /#([0-9A-Fa-f]{6})/g;
+  const palette = document.createElement('div');
+  palette.className = 'color-palette';
+
+  lines.forEach(line => {
+    const hexMatch = line.match(/#([0-9A-Fa-f]{6})/);
+    if (hexMatch) {
+      const colorName = line.replace(/#[0-9A-Fa-f]{6}/g,'').replace(/^[-•*:]/,'').split(':')[0].trim().substring(0,20);
+      const wrap = document.createElement('div');
+      wrap.className = 'color-swatch-wrap';
+      wrap.innerHTML = `<div class="color-swatch" style="background:${hexMatch[0]}"></div><div class="color-name">${colorName}</div>`;
+      palette.appendChild(wrap);
+    }
+  });
+
+  if (palette.children.length > 0) el.appendChild(palette);
+
+  // 나머지 텍스트
+  const nonColorLines = lines.filter(l => !/#[0-9A-Fa-f]{6}/.test(l));
+  renderBulletOrPara(el, nonColorLines.join('\n'));
+}
+
+function renderFabricSection(el, body) {
+  const lines = body.split('\n').filter(l => l.trim());
+  const fabricKeywords = [];
+  const others = [];
+
+  lines.forEach(line => {
+    const t = line.replace(/^[-•*\d.]\s*/,'').trim();
+    if (!t) return;
+    const colonIdx = t.indexOf(':');
+    if (colonIdx > 0 && colonIdx < 20) {
+      fabricKeywords.push(t.substring(0, colonIdx).trim());
+      others.push(t);
+    } else {
+      others.push(t);
+    }
+  });
+
+  if (fabricKeywords.length) {
+    const tags = document.createElement('div');
+    tags.className = 'fabric-tags';
+    fabricKeywords.forEach(f => {
+      const tag = document.createElement('span');
+      tag.className = 'fabric-tag';
+      tag.textContent = f;
+      tags.appendChild(tag);
+    });
+    el.appendChild(tags);
+  }
+
+  renderBulletOrPara(el, others.join('\n'));
+}
+
+function renderKeywordSection(el, body) {
+  const lines = body.split('\n').filter(l => l.trim());
+  const keywords = [];
+  const others = [];
+
+  lines.forEach(line => {
+    const t = line.replace(/^[-•*\d.]\s*/,'').trim();
+    if (!t) return;
+    if (t.length < 20 && !t.includes('→') && !t.includes(':')) {
+      keywords.push(t);
+    } else {
+      others.push(t);
+    }
+  });
+
+  if (keywords.length) {
+    const grid = document.createElement('div');
+    grid.className = 'trend-grid';
+    keywords.forEach(k => {
+      const card = document.createElement('div');
+      card.className = 'trend-keyword-card';
+      card.innerHTML = `<div class="keyword-text">${k}</div>`;
+      grid.appendChild(card);
+    });
+    el.appendChild(grid);
+  }
+
+  renderBulletOrPara(el, others.join('\n'));
+}
+
+function renderGenericSection(el, body) {
+  // 인사이트 블록 (★ 또는 → 포함 라인)
+  const lines = body.split('\n');
+  const insightLines = [];
+  const normalLines = [];
+
+  lines.forEach(line => {
+    if (line.includes('핵심 메시지') || line.includes('인사이트') || line.includes('★')) {
+      insightLines.push(line.replace(/^[-•*★]\s*/,'').trim());
+    } else {
+      normalLines.push(line);
+    }
+  });
+
+  if (insightLines.length) {
+    const block = document.createElement('div');
+    block.className = 'insight-block';
+    block.innerHTML = insightLines.map(l => `<p>${l}</p>`).join('');
+    el.appendChild(block);
+  }
+
+  renderBulletOrPara(el, normalLines.join('\n'));
+}
+
+function renderBulletOrPara(el, text) {
+  const lines = text.split('\n').filter(l => l.trim());
+  if (!lines.length) return;
+  const hasBullets = lines.some(l => /^[-•*]/.test(l.trim()));
+  if (hasBullets) {
+    const ul = document.createElement('ul');
+    ul.className = 'bullet-list';
+    lines.forEach(line => {
+      const t = line.replace(/^[-•*]\s*/,'').trim();
+      if (!t) return;
+      const li = document.createElement('li');
+      li.textContent = t;
+      ul.appendChild(li);
+    });
+    el.appendChild(ul);
+  } else {
+    const p = document.createElement('p');
+    p.style.cssText = 'font-size:14px;line-height:1.9;color:var(--gray-100);white-space:pre-wrap;font-weight:300;';
+    p.textContent = text;
+    el.appendChild(p);
+  }
+}
+
+function copyReport() {
+  if (!fullText) return;
+  navigator.clipboard.writeText(fullText).then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = '복사됨 ✓';
+    setTimeout(() => btn.textContent = '복사', 2000);
+  });
+}
+
+function printReport() {
+  window.print();
+}
+</script>
+</body>
+</html>

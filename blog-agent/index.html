@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>블로그 에이전트 v2 — 4050 남성패션</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0e0e;
+    --surface: #161616;
+    --surface2: #1e1e1e;
+    --border: #2a2a2a;
+    --border2: #333;
+    --gold: #c9a84c;
+    --gold-light: #e2c47a;
+    --gold-dim: rgba(201,168,76,0.15);
+    --text: #e8e4dc;
+    --text-muted: #888;
+    --text-dim: #555;
+    --green: #4caf72;
+    --green-bg: rgba(76,175,114,0.1);
+    --red: #e05c5c;
+    --red-bg: rgba(224,92,92,0.1);
+    --blue: #5b9cf6;
+    --blue-bg: rgba(91,156,246,0.1);
+    --purple: #a78bfa;
+    --purple-bg: rgba(167,139,250,0.1);
+    --orange: #fb923c;
+    --orange-bg: rgba(251,146,60,0.1);
+    /* 카테고리 색상 */
+    --cat-style: #5b9cf6;
+    --cat-casual: #4caf72;
+    --cat-formal: #c9a84c;
+    --cat-accessories: #a78bfa;
+    --cat-shopping: #fb923c;
+    --cat-seasonal: #e05c5c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Noto Sans KR', sans-serif; font-weight: 300; min-height: 100vh; font-size: 14px; line-height: 1.7; }
+  .app { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; }
+
+  /* Sidebar */
+  .sidebar { background: var(--surface); border-right: 1px solid var(--border); position: sticky; top: 0; height: 100vh; overflow-y: auto; display: flex; flex-direction: column; }
+  .sidebar-logo { padding: 28px 24px 20px; border-bottom: 1px solid var(--border); }
+  .logo-en { font-family: 'Noto Serif KR', serif; font-size: 11px; letter-spacing: 0.15em; color: var(--gold); text-transform: uppercase; margin-bottom: 4px; }
+  .logo-kr { font-size: 15px; font-weight: 500; color: var(--text); }
+  .logo-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .logo-version { display: inline-block; font-size: 10px; background: var(--gold-dim); color: var(--gold); padding: 1px 6px; border-radius: 6px; margin-top: 4px; }
+  .nav { padding: 16px 0; flex: 1; }
+  .nav-section { padding: 0 24px 6px; font-size: 10px; letter-spacing: 0.1em; color: var(--text-dim); text-transform: uppercase; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 24px; cursor: pointer; transition: all 0.15s; color: var(--text-muted); font-size: 13px; position: relative; }
+  .nav-item:hover { color: var(--text); background: var(--surface2); }
+  .nav-item.active { color: var(--gold); background: var(--gold-dim); }
+  .nav-item.active::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: var(--gold); }
+  .nav-icon { font-size: 14px; width: 18px; text-align: center; }
+  .nav-badge { margin-left: auto; background: var(--gold-dim); color: var(--gold); font-size: 10px; padding: 1px 6px; border-radius: 10px; }
+  .sidebar-bottom { padding: 16px 24px; border-top: 1px solid var(--border); }
+  .api-status { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-muted); }
+  .api-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+
+  /* Main */
+  .main { background: var(--bg); overflow-y: auto; height: 100vh; }
+  .main-header { padding: 32px 40px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-end; justify-content: space-between; }
+  .page-label { font-size: 10px; letter-spacing: 0.12em; color: var(--gold); text-transform: uppercase; margin-bottom: 6px; }
+  .page-title { font-size: 24px; font-weight: 500; font-family: 'Noto Serif KR', serif; }
+  .page-desc { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+  .content { padding: 32px 40px; }
+
+  /* Steps */
+  .steps { display: flex; align-items: center; margin-bottom: 32px; }
+  .step-item { display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
+  .step-num { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; border: 1px solid var(--border2); color: var(--text-muted); flex-shrink: 0; }
+  .step-info .step-label { font-size: 11px; color: var(--text-dim); }
+  .step-info .step-name { font-size: 13px; font-weight: 500; color: var(--text-muted); }
+  .step-item.active .step-num { background: var(--gold); border-color: var(--gold); color: #000; }
+  .step-item.active .step-name { color: var(--gold); }
+  .step-item.done .step-num { background: var(--green-bg); border-color: var(--green); color: var(--green); }
+  .step-item.done .step-name { color: var(--text); }
+  .step-divider { flex: 1; height: 1px; background: var(--border); min-width: 20px; }
+  .progress-bar { height: 2px; background: var(--border); border-radius: 2px; margin-bottom: 20px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--gold); transition: width 0.4s ease; border-radius: 2px; }
+
+  /* Cards */
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 20px; }
+  .card-header { margin-bottom: 18px; }
+  .card-title { font-size: 15px; font-weight: 500; margin-bottom: 4px; }
+  .card-subtitle { font-size: 12px; color: var(--text-muted); }
+
+  /* Form */
+  .form-row { margin-bottom: 16px; }
+  .form-label { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; display: block; letter-spacing: 0.03em; }
+  .form-select, .form-input, .form-textarea { width: 100%; background: var(--surface2); border: 1px solid var(--border2); border-radius: 8px; color: var(--text); font-family: 'Noto Sans KR', sans-serif; font-size: 13px; padding: 10px 14px; outline: none; transition: border-color 0.15s; }
+  .form-select:focus, .form-input:focus, .form-textarea:focus { border-color: var(--gold); }
+  .form-textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  /* Buttons */
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 11px 22px; border-radius: 8px; font-family: 'Noto Sans KR', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; border: none; transition: all 0.15s; }
+  .btn-primary { background: var(--gold); color: #000; }
+  .btn-primary:hover { background: var(--gold-light); }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-ghost { background: transparent; border: 1px solid var(--border2); color: var(--text-muted); }
+  .btn-ghost:hover { border-color: var(--text-muted); color: var(--text); }
+  .btn-sm { padding: 7px 14px; font-size: 12px; }
+
+  /* Topic cards */
+  .topic-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .topic-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 16px; cursor: pointer; transition: all 0.15s; position: relative; }
+  .topic-card:hover { border-color: var(--border2); }
+  .topic-card.selected { border-color: var(--gold); background: var(--gold-dim); }
+  .topic-card.selected::after { content: '✓'; position: absolute; top: 10px; right: 12px; color: var(--gold); font-size: 13px; font-weight: 600; }
+  .topic-cat { font-size: 10px; letter-spacing: 0.08em; color: var(--gold); text-transform: uppercase; margin-bottom: 6px; }
+  .topic-title { font-size: 14px; font-weight: 500; margin-bottom: 6px; line-height: 1.4; }
+  .topic-keywords { font-size: 11px; color: var(--text-muted); }
+  .topic-card.add-card { border-style: dashed; display: flex; align-items: center; justify-content: center; color: var(--text-dim); font-size: 13px; gap: 8px; min-height: 90px; }
+
+  /* Duplicate warning */
+  .dup-warning { display: none; background: var(--red-bg); border: 1px solid var(--red); border-radius: 8px; padding: 10px 14px; font-size: 12px; color: var(--red); margin-top: 8px; }
+  .dup-warning.show { display: block; }
+  .dup-item { padding: 2px 0; opacity: 0.8; }
+
+  /* Output */
+  .output-box { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 20px 24px; font-size: 13px; line-height: 1.9; min-height: 200px; white-space: pre-wrap; color: var(--text); position: relative; }
+  .output-placeholder { color: var(--text-dim); font-style: italic; }
+  .cursor { display: inline-block; width: 2px; height: 14px; background: var(--gold); margin-left: 2px; animation: blink 0.8s infinite; vertical-align: middle; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+  .copy-btn { position: absolute; top: 12px; right: 12px; background: var(--surface); border: 1px solid var(--border2); color: var(--text-muted); font-size: 11px; padding: 4px 10px; border-radius: 6px; cursor: pointer; transition: all 0.15s; }
+  .copy-btn:hover { color: var(--text); }
+
+  /* SEO tags */
+  .seo-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  .seo-tag { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+  .seo-main { background: var(--gold-dim); border: 1px solid var(--gold); color: var(--gold); }
+  .seo-sub { background: var(--surface2); border: 1px solid var(--border2); color: var(--text-muted); }
+  .seo-hash { background: var(--blue-bg); border: 1px solid var(--blue); color: var(--blue); }
+
+  /* Status badges */
+  .status-badge { font-size: 11px; padding: 3px 10px; border-radius: 10px; font-weight: 500; }
+  .status-planned { background: var(--blue-bg); border: 1px solid var(--blue); color: var(--blue); }
+  .status-published { background: var(--green-bg); border: 1px solid var(--green); color: var(--green); }
+  .status-draft { background: var(--surface2); border: 1px solid var(--border2); color: var(--text-muted); }
+
+  /* ── CALENDAR ────────────────────────────────────────────────── */
+  .cal-nav { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
+  .cal-nav-btn { background: var(--surface2); border: 1px solid var(--border2); color: var(--text-muted); width: 32px; height: 32px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: all 0.15s; }
+  .cal-nav-btn:hover { color: var(--text); border-color: var(--border); }
+  .cal-month { font-size: 18px; font-weight: 500; font-family: 'Noto Serif KR', serif; }
+  .cal-stats { margin-left: auto; display: flex; gap: 16px; align-items: center; }
+  .cal-stat { font-size: 12px; color: var(--text-muted); }
+  .cal-stat span { color: var(--gold); font-weight: 500; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .cal-dow { background: var(--surface); padding: 10px; text-align: center; font-size: 11px; color: var(--text-muted); letter-spacing: 0.05em; font-weight: 500; }
+  .cal-cell { background: var(--surface); min-height: 90px; padding: 8px; cursor: pointer; transition: background 0.15s; position: relative; }
+  .cal-cell:hover { background: var(--surface2); }
+  .cal-cell.today { background: var(--gold-dim); }
+  .cal-cell.other-month .cal-day { color: var(--text-dim); }
+  .cal-day { font-size: 12px; font-weight: 500; color: var(--text-muted); margin-bottom: 4px; }
+  .cal-cell.today .cal-day { color: var(--gold); }
+  .cal-post-dot { font-size: 10px; padding: 2px 6px; border-radius: 4px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; cursor: pointer; line-height: 1.4; }
+  .cal-more { font-size: 10px; color: var(--text-dim); padding: 1px 4px; }
+  .cat-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 4px; flex-shrink: 0; }
+
+  /* Calendar post detail popup */
+  .cal-popup { position: fixed; background: var(--surface); border: 1px solid var(--border2); border-radius: 10px; padding: 16px; width: 260px; z-index: 200; box-shadow: 0 8px 32px rgba(0,0,0,0.5); display: none; }
+  .cal-popup.show { display: block; }
+
+  /* ── HISTORY ────────────────────────────────────────────────── */
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+  .stat-card { background: var(--surface2); border-radius: 10px; padding: 14px 16px; }
+  .stat-label { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
+  .stat-val { font-size: 22px; font-weight: 500; }
+  .filter-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+  .filter-btn { padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border2); background: transparent; color: var(--text-muted); font-size: 12px; cursor: pointer; transition: all 0.15s; font-family: 'Noto Sans KR', sans-serif; }
+  .filter-btn:hover { border-color: var(--border); color: var(--text); }
+  .filter-btn.active { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
+  .cat-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .cat-bar-label { font-size: 12px; color: var(--text-muted); width: 100px; flex-shrink: 0; }
+  .cat-bar-track { flex: 1; height: 4px; background: var(--border); border-radius: 2px; }
+  .cat-bar-fill { height: 100%; border-radius: 2px; transition: width 0.5s ease; }
+  .cat-bar-count { font-size: 12px; color: var(--text-muted); width: 24px; text-align: right; }
+
+  /* Info box */
+  .info-box { background: var(--blue-bg); border: 1px solid var(--blue); border-radius: 8px; padding: 12px 16px; font-size: 12px; color: var(--blue); margin-bottom: 16px; }
+
+  /* Action row */
+  .action-row { display: flex; gap: 12px; align-items: center; margin-top: 20px; flex-wrap: wrap; }
+
+  /* Spinner */
+  .spinner { width: 14px; height: 14px; border: 2px solid var(--border2); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.7s linear infinite; display: inline-block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Toast */
+  .toast { position: fixed; bottom: 24px; right: 24px; background: var(--surface2); border: 1px solid var(--green); color: var(--green); padding: 12px 20px; border-radius: 8px; font-size: 13px; transform: translateY(80px); opacity: 0; transition: all 0.3s; z-index: 300; }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  /* Section */
+  .section-view { display: none; }
+  .section-view.active { display: block; }
+
+  /* Divider */
+  .divider { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+  @media (max-width: 900px) {
+    .app { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .content { padding: 20px; }
+    .main-header { padding: 20px; }
+    .form-grid { grid-template-columns: 1fr; }
+    .topic-grid { grid-template-columns: 1fr; }
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+    .cal-cell { min-height: 60px; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-en">Blog Agent</div>
+      <div class="logo-kr">블로그 에이전트</div>
+      <div class="logo-version">v2.0 Phase 2</div>
+    </div>
+    <nav class="nav">
+      <div class="nav-section" style="margin-top:8px;">콘텐츠</div>
+      <div class="nav-item active" onclick="showSection('generate')"><span class="nav-icon">✦</span> 포스트 생성</div>
+      <div class="nav-item" onclick="showSection('schedule')"><span class="nav-icon">◈</span> 발행 캘린더<span class="nav-badge" id="schedule-badge">0</span></div>
+      <div class="nav-item" onclick="showSection('history')"><span class="nav-icon">◎</span> 콘텐츠 현황<span class="nav-badge" id="history-badge">0</span></div>
+      <div class="nav-section" style="margin-top:16px;">설정</div>
+      <div class="nav-item" onclick="showSection('settings')"><span class="nav-icon">◇</span> 에이전트 설정</div>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="api-status"><div class="api-dot"></div>Claude API 연결됨</div>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <!-- ══ GENERATE ══════════════════════════════════════════════ -->
+    <div id="section-generate" class="section-view active">
+      <div class="main-header">
+        <div>
+          <div class="page-label">Content Generation</div>
+          <div class="page-title">포스트 생성</div>
+          <div class="page-desc">주제 선택 → 초안 생성 → SEO 최적화</div>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="resetAll()">초기화</button>
+      </div>
+      <div class="content">
+        <div class="steps">
+          <div class="step-item active" id="step1-item"><div class="step-num">1</div><div class="step-info"><div class="step-label">Step 1</div><div class="step-name">주제 기획</div></div></div>
+          <div class="step-divider"></div>
+          <div class="step-item" id="step2-item"><div class="step-num">2</div><div class="step-info"><div class="step-label">Step 2</div><div class="step-name">초안 생성</div></div></div>
+          <div class="step-divider"></div>
+          <div class="step-item" id="step3-item"><div class="step-num">3</div><div class="step-info"><div class="step-label">Step 3</div><div class="step-name">SEO 최적화</div></div></div>
+          <div class="step-divider"></div>
+          <div class="step-item" id="step4-item"><div class="step-num">4</div><div class="step-info"><div class="step-label">Step 4</div><div class="step-name">검토 & 저장</div></div></div>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progress" style="width:25%"></div></div>
+
+        <!-- Step 1 -->
+        <div id="step1" class="step-content">
+          <div class="card">
+            <div class="card-header"><div class="card-title">포스트 조건 설정</div><div class="card-subtitle">카테고리와 시즌을 선택하면 에이전트가 주제를 제안합니다</div></div>
+            <div class="form-grid">
+              <div class="form-row">
+                <label class="form-label">카테고리</label>
+                <select class="form-select" id="category">
+                  <option value="">선택하세요</option>
+                  <option value="style-basics">스타일 기본기</option>
+                  <option value="casual">캐주얼 마스터리</option>
+                  <option value="formal">포멀·비즈니스</option>
+                  <option value="accessories">액세서리</option>
+                  <option value="shopping">스마트 쇼핑</option>
+                  <option value="seasonal">시즌 콘텐츠</option>
+                </select>
+              </div>
+              <div class="form-row">
+                <label class="form-label">시즌 / 테마</label>
+                <select class="form-select" id="season">
+                  <option value="2025-01">2025년 1월</option>
+                  <option value="2025-02">2025년 2월</option>
+                  <option value="2025-03">2025년 3월</option>
+                  <option value="2025-04">2025년 4월</option>
+                  <option value="2025-05">2025년 5월</option>
+                  <option value="2025-06">2025년 6월</option>
+                  <option value="2025-07">2025년 7월</option>
+                  <option value="2025-08">2025년 8월</option>
+                  <option value="2025-09">2025년 9월</option>
+                  <option value="2025-10">2025년 10월</option>
+                  <option value="2025-11">2025년 11월</option>
+                  <option value="2025-12">2025년 12월</option>
+                  <option value="2026-01">2026년 1월</option>
+                  <option value="2026-02">2026년 2월</option>
+                  <option value="2026-03">2026년 3월</option>
+                  <option value="2026-04" selected>2026년 4월</option>
+                  <option value="2026-05">2026년 5월</option>
+                  <option value="2026-06">2026년 6월</option>
+                  <option value="2026-07">2026년 7월</option>
+                  <option value="2026-08">2026년 8월</option>
+                  <option value="2026-09">2026년 9월</option>
+                  <option value="2026-10">2026년 10월</option>
+                  <option value="2026-11">2026년 11월</option>
+                  <option value="2026-12">2026년 12월</option>
+                  <option value="evergreen">에버그린 (시즌 무관)</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <label class="form-label">추가 키워드 (선택)</label>
+              <input class="form-input" id="extra-keyword" placeholder="예: 결혼식 하객룩, 체형 커버, 직장인 등">
+            </div>
+            <div class="action-row">
+              <button class="btn btn-primary" id="suggest-btn" onclick="suggestTopics()"><span id="suggest-icon">✦</span> 주제 제안받기</button>
+            </div>
+          </div>
+
+          <div id="topic-area" style="display:none;">
+            <div class="card">
+              <div class="card-header"><div class="card-title">제안된 주제</div><div class="card-subtitle">하나를 선택하거나 직접 입력하세요</div></div>
+              <div id="topic-grid" class="topic-grid"></div>
+              <div class="form-row" style="margin-top:20px;">
+                <label class="form-label">직접 입력 또는 수정</label>
+                <input class="form-input" id="custom-topic" placeholder="주제를 직접 입력하세요" oninput="checkDuplicate(this.value)">
+                <div class="dup-warning" id="dup-warning">
+                  <strong>⚠ 유사 주제 감지</strong> — 아래 포스트와 내용이 겹칠 수 있습니다:
+                  <div id="dup-list" style="margin-top:6px;"></div>
+                </div>
+              </div>
+              <div class="action-row">
+                <button class="btn btn-primary" onclick="goStep2()">다음 단계 →</button>
+                <button class="btn btn-ghost" onclick="suggestTopics()">다시 제안</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div id="step2" class="step-content" style="display:none;">
+          <div class="card">
+            <div class="card-header"><div class="card-title">초안 생성</div><div class="card-subtitle" id="selected-topic-display"></div></div>
+            <div class="info-box">MD 18년 경력 페르소나 · 4050 남성 타깃 · 네이버 블로그 템플릿 자동 적용</div>
+            <div style="position:relative;">
+              <div class="output-box" id="draft-output"><span class="output-placeholder">포스트 초안이 여기에 생성됩니다</span></div>
+              <button class="copy-btn" onclick="copyText('draft-output')">복사</button>
+            </div>
+            <div class="action-row">
+              <button class="btn btn-primary" id="draft-btn" onclick="generateDraft()"><span id="draft-icon">✦</span> 초안 생성</button>
+              <button class="btn btn-ghost" onclick="goStep(1)">← 이전</button>
+              <button class="btn btn-ghost" id="to-step3-btn" onclick="goStep3()" style="display:none;">SEO 최적화 →</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div id="step3" class="step-content" style="display:none;">
+          <div class="card">
+            <div class="card-header"><div class="card-title">SEO 최적화</div><div class="card-subtitle">네이버 검색 기준 키워드 분석 및 해시태그 추출</div></div>
+            <div style="position:relative;">
+              <div class="output-box" id="seo-output"><span class="output-placeholder">SEO 분석 결과가 여기에 표시됩니다</span></div>
+            </div>
+            <div class="action-row">
+              <button class="btn btn-primary" id="seo-btn" onclick="runSEO()"><span id="seo-icon">✦</span> SEO 분석 실행</button>
+              <button class="btn btn-ghost" onclick="goStep(2)">← 이전</button>
+              <button class="btn btn-ghost" id="to-step4-btn" onclick="goStep4()" style="display:none;">검토 & 저장 →</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div id="step4" class="step-content" style="display:none;">
+          <div class="card">
+            <div class="card-header"><div class="card-title">검토 & 저장</div><div class="card-subtitle">최종 확인 후 저장합니다</div></div>
+            <div class="form-row">
+              <label class="form-label">최종 제목</label>
+              <input class="form-input" id="final-title">
+            </div>
+            <div class="form-row">
+              <label class="form-label">최종 본문 (편집 가능)</label>
+              <textarea class="form-textarea" id="final-body" style="min-height:280px;"></textarea>
+            </div>
+            <div class="form-row">
+              <label class="form-label">해시태그</label>
+              <div id="final-hashtags" class="seo-tags"></div>
+            </div>
+            <div class="form-grid">
+              <div class="form-row">
+                <label class="form-label">발행 예정일</label>
+                <input class="form-input" id="pub-date" type="date">
+              </div>
+              <div class="form-row">
+                <label class="form-label">상태</label>
+                <select class="form-select" id="post-status">
+                  <option value="planned">예정</option>
+                  <option value="draft">임시저장</option>
+                  <option value="published">발행완료</option>
+                </select>
+              </div>
+            </div>
+            <div class="action-row">
+              <button class="btn btn-primary" onclick="savePost()">저장 & 스케줄 등록</button>
+              <button class="btn btn-ghost" onclick="goStep(3)">← 이전</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══ SCHEDULE / CALENDAR ══════════════════════════════════ -->
+    <div id="section-schedule" class="section-view">
+      <div class="main-header">
+        <div>
+          <div class="page-label">Publishing Calendar</div>
+          <div class="page-title">발행 캘린더</div>
+          <div class="page-desc">월별 발행 스케줄을 시각적으로 관리합니다</div>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="showSection('generate')">+ 새 포스트</button>
+      </div>
+      <div class="content">
+        <div class="cal-nav">
+          <button class="cal-nav-btn" onclick="changeMonth(-1)">‹</button>
+          <div class="cal-month" id="cal-month-title"></div>
+          <button class="cal-nav-btn" onclick="changeMonth(1)">›</button>
+          <div class="cal-stats">
+            <div class="cal-stat">이번 달 <span id="cal-month-count">0</span>편</div>
+            <div class="cal-stat">목표 <span id="cal-target">20</span>편</div>
+          </div>
+        </div>
+
+        <!-- Category legend -->
+        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;">
+          <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-muted);"><span class="cat-dot" style="background:var(--cat-style)"></span>스타일 기본기</div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-muted);"><span class="cat-dot" style="background:var(--cat-casual)"></span>캐주얼</div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-muted);"><span class="cat-dot" style="background:var(--cat-formal)"></span>포멀</div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-muted);"><span class="cat-dot" style="background:var(--cat-accessories)"></span>액세서리</div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-muted);"><span class="cat-dot" style="background:var(--cat-shopping)"></span>스마트 쇼핑</div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-muted);"><span class="cat-dot" style="background:var(--cat-seasonal)"></span>시즌</div>
+        </div>
+
+        <div class="cal-grid" id="cal-grid"></div>
+
+        <!-- Weekly balance bar -->
+        <div class="card" style="margin-top:20px;">
+          <div class="card-title" style="margin-bottom:14px;">이번 달 카테고리 분포</div>
+          <div id="cal-cat-bars"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ HISTORY ════════════════════════════════════════════════ -->
+    <div id="section-history" class="section-view">
+      <div class="main-header">
+        <div>
+          <div class="page-label">Content Status</div>
+          <div class="page-title">콘텐츠 현황</div>
+          <div class="page-desc">저장된 포스트 목록 및 통계</div>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="clearHistory()">전체 삭제</button>
+      </div>
+      <div class="content">
+        <!-- Stats -->
+        <div class="stats-grid" id="stats-grid"></div>
+
+        <!-- Filter -->
+        <div class="filter-row">
+          <button class="filter-btn active" onclick="filterHistory('all', this)">전체</button>
+          <button class="filter-btn" onclick="filterHistory('planned', this)">예정</button>
+          <button class="filter-btn" onclick="filterHistory('published', this)">발행완료</button>
+          <button class="filter-btn" onclick="filterHistory('draft', this)">임시저장</button>
+          <button class="filter-btn" onclick="filterHistory('style-basics', this)">스타일 기본기</button>
+          <button class="filter-btn" onclick="filterHistory('casual', this)">캐주얼</button>
+          <button class="filter-btn" onclick="filterHistory('formal', this)">포멀</button>
+          <button class="filter-btn" onclick="filterHistory('accessories', this)">액세서리</button>
+          <button class="filter-btn" onclick="filterHistory('shopping', this)">스마트 쇼핑</button>
+          <button class="filter-btn" onclick="filterHistory('seasonal', this)">시즌</button>
+        </div>
+
+        <div id="history-list"></div>
+      </div>
+    </div>
+
+    <!-- ══ SETTINGS ══════════════════════════════════════════════ -->
+    <div id="section-settings" class="section-view">
+      <div class="main-header">
+        <div>
+          <div class="page-label">Agent Settings</div>
+          <div class="page-title">에이전트 설정</div>
+        </div>
+      </div>
+      <div class="content">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Claude API 설정</div><div class="card-subtitle">Anthropic API 키 (로컬 저장)</div></div>
+          <div class="form-row">
+            <label class="form-label">API Key</label>
+            <input class="form-input" id="api-key-input" type="password" placeholder="sk-ant-...">
+          </div>
+          <div class="action-row"><button class="btn btn-primary" onclick="saveApiKey()">저장</button></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">블로그 기본 설정</div></div>
+          <div class="form-grid">
+            <div class="form-row">
+              <label class="form-label">블로그명</label>
+              <input class="form-input" id="blog-name" value="4050 남성패션 MD의 스타일 노트">
+            </div>
+            <div class="form-row">
+              <label class="form-label">주간 목표 발행 수</label>
+              <select class="form-select" id="weekly-target">
+                <option value="3">주 3편</option>
+                <option value="4">주 4편</option>
+                <option value="5" selected>주 5편</option>
+                <option value="7">매일 1편</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <label class="form-label">작성자 페르소나</label>
+            <textarea class="form-textarea" id="persona-input" style="min-height:60px;">남성복 MD 18년 경력. 브루노 바피 브랜드 팀장 출신. 수트·재킷·코트·캐주얼 전문. 40~50대 남성이 실제로 입을 수 있는 현실적인 스타일 조언 제공.</textarea>
+          </div>
+          <div class="action-row"><button class="btn btn-primary" onclick="saveSettings()">설정 저장</button></div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Calendar popup -->
+<div class="cal-popup" id="cal-popup">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+    <div style="font-size:13px;font-weight:500;" id="popup-date"></div>
+    <button onclick="closePopup()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:16px;">✕</button>
+  </div>
+  <div id="popup-posts"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── State ───────────────────────────────────────────────────────────────────
+let currentStep = 1;
+let selectedTopic = '';
+let generatedDraft = '';
+let seoData = { mainKeyword:'', subKeywords:[], hashtags:[] };
+let posts = JSON.parse(localStorage.getItem('blog-agent-posts') || '[]');
+let settings = JSON.parse(localStorage.getItem('blog-agent-settings') || '{}');
+let calYear = new Date().getFullYear();
+let calMonth = new Date().getMonth(); // 0-indexed
+let currentFilter = 'all';
+
+const CAT_COLORS = {
+  'style-basics': '#5b9cf6',
+  'casual': '#4caf72',
+  'formal': '#c9a84c',
+  'accessories': '#a78bfa',
+  'shopping': '#fb923c',
+  'seasonal': '#e05c5c',
+  '': '#888'
+};
+const CAT_NAMES = {
+  'style-basics': '스타일 기본기',
+  'casual': '캐주얼',
+  'formal': '포멀',
+  'accessories': '액세서리',
+  'shopping': '스마트 쇼핑',
+  'seasonal': '시즌',
+  '': '기타'
+};
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  if(settings.apiKey) document.getElementById('api-key-input').value = settings.apiKey;
+  if(settings.persona) document.getElementById('persona-input').value = settings.persona;
+  if(settings.weeklyTarget) document.getElementById('weekly-target').value = settings.weeklyTarget;
+  document.getElementById('pub-date').value = new Date().toISOString().split('T')[0];
+  updateBadges();
+  renderHistory();
+  renderCalendar();
+  renderStats();
+});
+
+// ─── API ─────────────────────────────────────────────────────────────────────
+async function callClaude(prompt, onChunk) {
+  const apiKey = settings.apiKey || document.getElementById('api-key-input').value;
+  if(!apiKey) { showToast('API 키를 먼저 설정하세요'); return null; }
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+    body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 3000, stream: true, messages: [{ role: 'user', content: prompt }] })
+  });
+  if(!res.ok) { showToast('API 오류: ' + res.status); return null; }
+  const reader = res.body.getReader();
+  const dec = new TextDecoder();
+  let full = '';
+  while(true) {
+    const {done, value} = await reader.read();
+    if(done) break;
+    const lines = dec.decode(value).split('\n');
+    for(const line of lines) {
+      if(!line.startsWith('data:')) continue;
+      const d = line.slice(5).trim();
+      if(d==='[DONE]') break;
+      try {
+        const j = JSON.parse(d);
+        if(j.type==='content_block_delta' && j.delta?.text) {
+          full += j.delta.text;
+          if(onChunk) onChunk(full);
+        }
+      } catch {}
+    }
+  }
+  return full;
+}
+
+// ─── Duplicate check ─────────────────────────────────────────────────────────
+function checkDuplicate(input) {
+  if(!input || input.length < 5) {
+    document.getElementById('dup-warning').classList.remove('show');
+    return;
+  }
+  const kw = input.toLowerCase().replace(/\s/g, '');
+  // 단순 토큰 유사도: 2글자 이상 공통 부분 체크
+  const similar = posts.filter(p => {
+    const t = p.title.toLowerCase().replace(/\s/g, '');
+    // 공통 서브스트링 3자 이상
+    for(let i=0; i<=kw.length-3; i++) {
+      if(t.includes(kw.slice(i, i+3))) return true;
+    }
+    return false;
+  });
+  const warn = document.getElementById('dup-warning');
+  const list = document.getElementById('dup-list');
+  if(similar.length) {
+    list.innerHTML = similar.slice(0,3).map(p=>`<div class="dup-item">· ${p.title} <span style="color:var(--text-dim)">(${p.pubDate||'날짜 미정'})</span></div>`).join('');
+    warn.classList.add('show');
+  } else {
+    warn.classList.remove('show');
+  }
+}
+
+// ─── Step 1: Topics ───────────────────────────────────────────────────────────
+async function suggestTopics() {
+  const cat = document.getElementById('category').value;
+  if(!cat) { showToast('카테고리를 선택하세요'); return; }
+  const btn = document.getElementById('suggest-btn');
+  btn.disabled = true;
+  document.getElementById('suggest-icon').innerHTML = '<div class="spinner"></div>';
+  const catMap = { 'style-basics':'스타일 기본기','casual':'캐주얼 마스터리','formal':'포멀·비즈니스','accessories':'액세서리','shopping':'스마트 쇼핑','seasonal':'시즌 콘텐츠' };
+  const monthNames2 = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+  const seasonMap = {};
+  [2025,2026].forEach(y => monthNames2.forEach((m,i) => { seasonMap[`${y}-${String(i+1).padStart(2,'0')}`] = `${y}년 ${m}`; }));
+  seasonMap['evergreen'] = '에버그린 (시즌 무관)';
+  const season = document.getElementById('season').value;
+  const extra = document.getElementById('extra-keyword').value;
+  const existing = posts.map(p=>p.title).join('\n');
+  const prompt = `당신은 네이버 블로그 콘텐츠 전략가입니다.
+조건: 블로그 4050 남성패션 / 카테고리: ${catMap[cat]} / 시즌: ${seasonMap[season]}${extra?` / 추가: ${extra}`:''}
+${existing?`중복 금지 목록:\n${existing}`:''}
+주제 4개를 아래 JSON 배열만 반환(다른 텍스트 없이):
+[{"title":"제목","keywords":"키워드1,키워드2,키워드3"},{"title":"...","keywords":"..."},{"title":"...","keywords":"..."},{"title":"...","keywords":"..."}]`;
+  const result = await callClaude(prompt, null);
+  btn.disabled = false;
+  document.getElementById('suggest-icon').textContent = '✦';
+  if(!result) return;
+  try {
+    const topics = JSON.parse(result.replace(/```json|```/g,'').trim());
+    renderTopics(topics, catMap[cat]);
+    document.getElementById('topic-area').style.display = 'block';
+  } catch { showToast('주제 파싱 오류. 다시 시도하세요.'); }
+}
+
+function renderTopics(topics, catName) {
+  const grid = document.getElementById('topic-grid');
+  grid.innerHTML = '';
+  topics.forEach(t => {
+    const div = document.createElement('div');
+    div.className = 'topic-card';
+    div.innerHTML = `<div class="topic-cat">${catName}</div><div class="topic-title">${t.title}</div><div class="topic-keywords">🔑 ${t.keywords}</div>`;
+    div.onclick = () => {
+      document.querySelectorAll('.topic-card').forEach(c=>c.classList.remove('selected'));
+      div.classList.add('selected');
+      document.getElementById('custom-topic').value = t.title;
+      selectedTopic = t.title;
+      checkDuplicate(t.title);
+    };
+    grid.appendChild(div);
+  });
+  const add = document.createElement('div');
+  add.className = 'topic-card add-card';
+  add.innerHTML = '＋ 직접 입력';
+  add.onclick = () => document.getElementById('custom-topic').focus();
+  grid.appendChild(add);
+}
+
+function goStep2() {
+  const custom = document.getElementById('custom-topic').value.trim();
+  if(custom) selectedTopic = custom;
+  if(!selectedTopic) { showToast('주제를 선택하거나 입력하세요'); return; }
+  goStep(2);
+  document.getElementById('selected-topic-display').textContent = '선택된 주제: ' + selectedTopic;
+}
+
+// ─── Step 2: Draft ────────────────────────────────────────────────────────────
+async function generateDraft() {
+  const persona = settings.persona || document.getElementById('persona-input').value;
+  const btn = document.getElementById('draft-btn');
+  btn.disabled = true;
+  document.getElementById('draft-icon').innerHTML = '<div class="spinner"></div>';
+  const output = document.getElementById('draft-output');
+  output.innerHTML = '<span class="cursor"></span>';
+  const prompt = `당신은 다음 페르소나의 네이버 블로그 작성자입니다: ${persona}
+주제: ${selectedTopic} / 타깃: 40~50대 직장인 남성 / 톤: 친근하고 실용적, 전문성 있게
+
+템플릿 준수:
+[헤드라인] 제목 1줄 (SEO 고려, 40자 이내)
+[훅 도입부] 3~4줄 공감 유도
+[본문] 소제목 3~4개 (각 2~3문단, 실용 팁·브랜드 언급 포함)
+[코디 예시] 구체적 코디 1~2가지
+[마무리 CTA] 2~3줄 자연스러운 마무리
+[다음 포스트 예고] 1줄
+[해시태그] 10개`;
+  const result = await callClaude(prompt, (chunk) => {
+    output.innerHTML = chunk.replace(/\n/g,'<br>') + '<span class="cursor"></span>';
+  });
+  btn.disabled = false;
+  document.getElementById('draft-icon').textContent = '✦';
+  if(result) {
+    generatedDraft = result;
+    output.innerHTML = result.replace(/\n/g,'<br>');
+    document.getElementById('to-step3-btn').style.display = 'inline-flex';
+    showToast('초안 생성 완료');
+  }
+}
+
+// ─── Step 3: SEO ──────────────────────────────────────────────────────────────
+async function runSEO() {
+  const btn = document.getElementById('seo-btn');
+  btn.disabled = true;
+  document.getElementById('seo-icon').innerHTML = '<div class="spinner"></div>';
+  const prompt = `다음 네이버 블로그 포스트를 SEO 분석하여 JSON만 반환:
+${generatedDraft}
+{"mainKeyword":"","subKeywords":["","","","",""],"hashtags":["#","#","#","#","#","#","#","#","#","#"],"titleSuggestion":"","seoScore":0,"tips":["","",""]}`;
+  const result = await callClaude(prompt, null);
+  btn.disabled = false;
+  document.getElementById('seo-icon').textContent = '✦';
+  if(!result) return;
+  try {
+    seoData = JSON.parse(result.replace(/```json|```/g,'').trim());
+    renderSEOResult(seoData);
+    document.getElementById('to-step4-btn').style.display = 'inline-flex';
+    showToast('SEO 분석 완료');
+  } catch { document.getElementById('seo-output').textContent = result; }
+}
+
+function renderSEOResult(data) {
+  const out = document.getElementById('seo-output');
+  out.innerHTML = `
+    <div style="margin-bottom:16px;"><div style="font-size:11px;color:var(--text-muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em;">메인 키워드</div><span class="seo-tag seo-main">${data.mainKeyword}</span></div>
+    <div style="margin-bottom:16px;"><div style="font-size:11px;color:var(--text-muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em;">서브 키워드</div><div class="seo-tags">${data.subKeywords.map(k=>`<span class="seo-tag seo-sub">${k}</span>`).join('')}</div></div>
+    <div style="margin-bottom:16px;"><div style="font-size:11px;color:var(--text-muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em;">해시태그 10개</div><div class="seo-tags">${data.hashtags.map(h=>`<span class="seo-tag seo-hash">${h}</span>`).join('')}</div></div>
+    <div style="margin-bottom:16px;"><div style="font-size:11px;color:var(--text-muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em;">추천 제목</div><div style="font-size:14px;font-weight:500;color:var(--gold)">${data.titleSuggestion}</div></div>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;"><div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;">SEO 점수</div><div style="font-size:22px;font-weight:600;color:${data.seoScore>=80?'var(--green)':data.seoScore>=60?'var(--gold)':'var(--red)'};">${data.seoScore}</div><div style="font-size:12px;color:var(--text-muted);">/ 100</div></div>
+    <div>${data.tips.map(t=>`<div style="font-size:13px;color:var(--text);padding:4px 0;border-bottom:1px solid var(--border);">· ${t}</div>`).join('')}</div>`;
+}
+
+// ─── Step 4 ───────────────────────────────────────────────────────────────────
+function goStep4() {
+  goStep(4);
+  document.getElementById('final-title').value = seoData.titleSuggestion || selectedTopic;
+  document.getElementById('final-body').value = generatedDraft;
+  const htDiv = document.getElementById('final-hashtags');
+  htDiv.innerHTML = '';
+  (seoData.hashtags||[]).forEach(h => {
+    const span = document.createElement('span');
+    span.className = 'seo-tag seo-hash';
+    span.textContent = h;
+    htDiv.appendChild(span);
+  });
+}
+
+function savePost() {
+  const title = document.getElementById('final-title').value.trim();
+  if(!title) { showToast('제목을 입력하세요'); return; }
+  const post = {
+    id: Date.now(),
+    title,
+    body: document.getElementById('final-body').value.trim(),
+    hashtags: seoData.hashtags || [],
+    mainKeyword: seoData.mainKeyword || '',
+    pubDate: document.getElementById('pub-date').value,
+    status: document.getElementById('post-status').value,
+    category: document.getElementById('category').value,
+    createdAt: new Date().toISOString()
+  };
+  posts.unshift(post);
+  localStorage.setItem('blog-agent-posts', JSON.stringify(posts));
+  updateBadges(); renderHistory(); renderCalendar(); renderStats();
+  showToast('저장 완료 ✓');
+  setTimeout(() => showSection('schedule'), 1200);
+}
+
+// ─── CALENDAR ────────────────────────────────────────────────────────────────
+function changeMonth(delta) {
+  calMonth += delta;
+  if(calMonth > 11) { calMonth = 0; calYear++; }
+  if(calMonth < 0) { calMonth = 11; calYear--; }
+  renderCalendar();
+}
+
+function renderCalendar() {
+  const monthNames = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+  document.getElementById('cal-month-title').textContent = `${calYear}년 ${monthNames[calMonth]}`;
+
+  const firstDay = new Date(calYear, calMonth, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
+  const daysInPrev = new Date(calYear, calMonth, 0).getDate();
+  const today = new Date();
+
+  // Build date→posts map
+  const postMap = {};
+  posts.forEach(p => {
+    if(!p.pubDate) return;
+    const d = p.pubDate;
+    if(!postMap[d]) postMap[d] = [];
+    postMap[d].push(p);
+  });
+
+  // Count this month
+  const monthStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}`;
+  const monthCount = posts.filter(p => p.pubDate && p.pubDate.startsWith(monthStr)).length;
+  document.getElementById('cal-month-count').textContent = monthCount;
+  const target = parseInt(settings.weeklyTarget || 5) * 4;
+  document.getElementById('cal-target').textContent = target;
+
+  const grid = document.getElementById('cal-grid');
+  grid.innerHTML = '';
+
+  // Day headers
+  ['일','월','화','수','목','금','토'].forEach(d => {
+    const h = document.createElement('div');
+    h.className = 'cal-dow';
+    h.textContent = d;
+    grid.appendChild(h);
+  });
+
+  // Prev month padding
+  for(let i=0; i<firstDay; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'cal-cell other-month';
+    cell.innerHTML = `<div class="cal-day">${daysInPrev - firstDay + i + 1}</div>`;
+    grid.appendChild(cell);
+  }
+
+  // Current month days
+  for(let d=1; d<=daysInMonth; d++) {
+    const dateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isToday = today.getFullYear()===calYear && today.getMonth()===calMonth && today.getDate()===d;
+    const cell = document.createElement('div');
+    cell.className = 'cal-cell' + (isToday?' today':'');
+    cell.innerHTML = `<div class="cal-day">${d}</div>`;
+    const dayPosts = postMap[dateStr] || [];
+    dayPosts.slice(0,2).forEach(p => {
+      const dot = document.createElement('div');
+      dot.className = 'cal-post-dot';
+      const color = CAT_COLORS[p.category] || '#888';
+      dot.style.cssText = `background:${color}22;color:${color};border:1px solid ${color}44;`;
+      dot.textContent = p.title.slice(0,12) + (p.title.length>12?'…':'');
+      dot.onclick = (e) => { e.stopPropagation(); showPopup(e, dateStr, dayPosts); };
+      cell.appendChild(dot);
+    });
+    if(dayPosts.length > 2) {
+      const more = document.createElement('div');
+      more.className = 'cal-more';
+      more.textContent = `+${dayPosts.length-2}개 더`;
+      cell.appendChild(more);
+    }
+    cell.onclick = () => { if(!dayPosts.length) { document.getElementById('pub-date').value = dateStr; showSection('generate'); } };
+    grid.appendChild(cell);
+  }
+
+  // Fill remaining cells
+  const total = firstDay + daysInMonth;
+  const remaining = total % 7 === 0 ? 0 : 7 - (total % 7);
+  for(let i=1; i<=remaining; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'cal-cell other-month';
+    cell.innerHTML = `<div class="cal-day">${i}</div>`;
+    grid.appendChild(cell);
+  }
+
+  renderCatBars(monthStr);
+}
+
+function renderCatBars(monthStr) {
+  const monthPosts = posts.filter(p => p.pubDate && p.pubDate.startsWith(monthStr));
+  const counts = {};
+  Object.keys(CAT_NAMES).forEach(k => counts[k] = 0);
+  monthPosts.forEach(p => { if(counts[p.category]!==undefined) counts[p.category]++; });
+  const max = Math.max(...Object.values(counts), 1);
+  const bars = document.getElementById('cal-cat-bars');
+  bars.innerHTML = Object.entries(CAT_NAMES).filter(([k])=>k).map(([k,name]) => {
+    const count = counts[k] || 0;
+    const pct = Math.round(count / max * 100);
+    const color = CAT_COLORS[k];
+    return `<div class="cat-bar">
+      <div class="cat-bar-label">${name}</div>
+      <div class="cat-bar-track"><div class="cat-bar-fill" style="width:${pct}%;background:${color};"></div></div>
+      <div class="cat-bar-count" style="color:${color}">${count}</div>
+    </div>`;
+  }).join('');
+}
+
+function showPopup(e, dateStr, dayPosts) {
+  const popup = document.getElementById('cal-popup');
+  document.getElementById('popup-date').textContent = dateStr;
+  document.getElementById('popup-posts').innerHTML = dayPosts.map(p => {
+    const color = CAT_COLORS[p.category] || '#888';
+    return `<div style="padding:8px 0;border-bottom:1px solid var(--border);">
+      <div style="font-size:13px;font-weight:500;margin-bottom:2px;">${p.title}</div>
+      <div style="display:flex;gap:8px;align-items:center;margin-top:4px;">
+        <span style="font-size:11px;color:${color};background:${color}22;padding:2px 8px;border-radius:6px;">${CAT_NAMES[p.category]||'기타'}</span>
+        <span class="status-badge ${p.status==='published'?'status-published':p.status==='draft'?'status-draft':'status-planned'}">${p.status==='published'?'발행완료':p.status==='draft'?'임시저장':'예정'}</span>
+      </div>
+    </div>`;
+  }).join('');
+  const rect = e.target.getBoundingClientRect();
+  popup.style.left = Math.min(rect.left, window.innerWidth - 280) + 'px';
+  popup.style.top = (rect.bottom + 8) + 'px';
+  popup.classList.add('show');
+  document.addEventListener('click', closePopup, { once: true });
+}
+
+function closePopup() {
+  document.getElementById('cal-popup').classList.remove('show');
+}
+
+// ─── History & Stats ──────────────────────────────────────────────────────────
+function renderStats() {
+  const total = posts.length;
+  const published = posts.filter(p=>p.status==='published').length;
+  const planned = posts.filter(p=>p.status==='planned').length;
+  const draft = posts.filter(p=>p.status==='draft').length;
+  document.getElementById('stats-grid').innerHTML = `
+    <div class="stat-card"><div class="stat-label">전체 포스트</div><div class="stat-val" style="color:var(--gold)">${total}</div></div>
+    <div class="stat-card"><div class="stat-label">발행 완료</div><div class="stat-val" style="color:var(--green)">${published}</div></div>
+    <div class="stat-card"><div class="stat-label">발행 예정</div><div class="stat-val" style="color:var(--blue)">${planned}</div></div>
+    <div class="stat-card"><div class="stat-label">임시 저장</div><div class="stat-val" style="color:var(--text-muted)">${draft}</div></div>`;
+}
+
+function filterHistory(filter, btn) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderHistory();
+}
+
+function renderHistory() {
+  renderStats();
+  const list = document.getElementById('history-list');
+  let filtered = posts;
+  if(currentFilter === 'planned') filtered = posts.filter(p=>p.status==='planned'||!p.status);
+  else if(currentFilter === 'published') filtered = posts.filter(p=>p.status==='published');
+  else if(currentFilter === 'draft') filtered = posts.filter(p=>p.status==='draft');
+  else if(currentFilter !== 'all') filtered = posts.filter(p=>p.category===currentFilter);
+
+  if(!filtered.length) {
+    list.innerHTML = '<div style="color:var(--text-dim);font-size:13px;text-align:center;padding:60px 0;">해당 조건의 포스트가 없습니다.</div>';
+    return;
+  }
+  list.innerHTML = filtered.map(p => {
+    const color = CAT_COLORS[p.category] || '#888';
+    const statusClass = p.status==='published'?'status-published':p.status==='draft'?'status-draft':'status-planned';
+    const statusLabel = p.status==='published'?'발행완료':p.status==='draft'?'임시저장':'예정';
+    return `<div class="card" style="margin-bottom:12px;">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">
+        <div style="flex:1;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+            <span class="cat-dot" style="background:${color}"></span>
+            <span style="font-size:11px;color:${color};">${CAT_NAMES[p.category]||'기타'}</span>
+            <span class="status-badge ${statusClass}">${statusLabel}</span>
+          </div>
+          <div style="font-size:15px;font-weight:500;margin-bottom:4px;">${p.title}</div>
+          <div style="font-size:12px;color:var(--text-muted);">발행일: ${p.pubDate||'미정'} · 저장: ${new Date(p.createdAt).toLocaleDateString('ko-KR')}</div>
+          <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:4px;">${(p.hashtags||[]).slice(0,5).map(h=>`<span style="font-size:11px;color:var(--blue);background:var(--blue-bg);border:1px solid var(--blue);padding:2px 8px;border-radius:10px;">${h}</span>`).join('')}</div>
+        </div>
+        <div style="display:flex;gap:6px;flex-direction:column;align-items:flex-end;">
+          <div style="display:flex;gap:6px;">
+            <button class="btn btn-ghost btn-sm" onclick="copyPostBody(${p.id})">복사</button>
+            <button class="btn btn-ghost btn-sm" onclick="toggleStatus(${p.id})">${p.status==='published'?'예정으로':'발행완료'}</button>
+            <button class="btn btn-ghost btn-sm" style="color:var(--red);border-color:var(--red);" onclick="deletePost(${p.id})">삭제</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleStatus(id) {
+  const p = posts.find(x=>x.id===id);
+  if(!p) return;
+  p.status = p.status==='published' ? 'planned' : 'published';
+  localStorage.setItem('blog-agent-posts', JSON.stringify(posts));
+  renderHistory(); renderCalendar();
+  showToast(p.status==='published'?'발행완료로 변경됨':'예정으로 변경됨');
+}
+
+function deletePost(id) {
+  if(!confirm('삭제할까요?')) return;
+  posts = posts.filter(p=>p.id!==id);
+  localStorage.setItem('blog-agent-posts', JSON.stringify(posts));
+  updateBadges(); renderHistory(); renderCalendar(); renderStats();
+  showToast('삭제됨');
+}
+
+function copyPostBody(id) {
+  const p = posts.find(x=>x.id===id);
+  if(!p) return;
+  navigator.clipboard.writeText(p.title + '\n\n' + p.body + '\n\n' + (p.hashtags||[]).join(' '));
+  showToast('클립보드에 복사됨');
+}
+
+function clearHistory() {
+  if(!confirm('전체 히스토리를 삭제할까요?')) return;
+  posts = [];
+  localStorage.setItem('blog-agent-posts', JSON.stringify(posts));
+  updateBadges(); renderHistory(); renderCalendar(); renderStats();
+}
+
+// ─── Settings ─────────────────────────────────────────────────────────────────
+function saveApiKey() {
+  settings.apiKey = document.getElementById('api-key-input').value;
+  localStorage.setItem('blog-agent-settings', JSON.stringify(settings));
+  showToast('API 키 저장됨');
+}
+
+function saveSettings() {
+  settings.apiKey = document.getElementById('api-key-input').value;
+  settings.persona = document.getElementById('persona-input').value;
+  settings.blogName = document.getElementById('blog-name').value;
+  settings.weeklyTarget = document.getElementById('weekly-target').value;
+  localStorage.setItem('blog-agent-settings', JSON.stringify(settings));
+  showToast('설정 저장됨');
+}
+
+// ─── Utils ────────────────────────────────────────────────────────────────────
+function goStep(n) {
+  currentStep = n;
+  [1,2,3,4].forEach(i => {
+    const el = document.getElementById('step'+i);
+    if(el) el.style.display = i===n ? 'block' : 'none';
+    const item = document.getElementById('step'+i+'-item');
+    if(item) item.className = 'step-item' + (i===n?' active':(i<n?' done':''));
+  });
+  document.getElementById('progress').style.width = {1:25,2:50,3:75,4:100}[n] + '%';
+}
+function goStep3() { goStep(3); }
+
+function showSection(name) {
+  document.querySelectorAll('.section-view').forEach(s=>s.classList.remove('active'));
+  document.getElementById('section-'+name).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));
+  const items = document.querySelectorAll('.nav-item');
+  const idx = ['generate','schedule','history','settings'].indexOf(name);
+  if(items[idx]) items[idx].classList.add('active');
+  if(name==='schedule') renderCalendar();
+  if(name==='history') { renderHistory(); renderStats(); }
+}
+
+function updateBadges() {
+  document.getElementById('schedule-badge').textContent = posts.filter(p=>p.pubDate).length;
+  document.getElementById('history-badge').textContent = posts.length;
+}
+
+function copyText(id) {
+  navigator.clipboard.writeText(document.getElementById(id).innerText);
+  showToast('복사됨');
+}
+
+function resetAll() {
+  currentStep = 1; selectedTopic = ''; generatedDraft = '';
+  seoData = { mainKeyword:'', subKeywords:[], hashtags:[] };
+  goStep(1);
+  document.getElementById('topic-area').style.display = 'none';
+  document.getElementById('draft-output').innerHTML = '<span class="output-placeholder">포스트 초안이 여기에 생성됩니다</span>';
+  document.getElementById('seo-output').innerHTML = '<span class="output-placeholder">SEO 분석 결과가 여기에 표시됩니다</span>';
+  document.getElementById('to-step3-btn').style.display='none';
+  document.getElementById('to-step4-btn').style.display='none';
+  document.getElementById('custom-topic').value='';
+  document.getElementById('dup-warning').classList.remove('show');
+  showToast('초기화됨');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2500);
+}
+</script>
+</body>
+</html>
